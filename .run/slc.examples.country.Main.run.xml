@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="slc.examples.country.Main" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="com.github.iamnicknack.slc.examples.country.Main" />
+    <option name="MAIN_CLASS_NAME" value="io.github.iamnicknack.slc.examples.country.Main" />
     <module name="country-search" />
     <option name="VM_PARAMETERS" value="-javaagent:$MAVEN_REPOSITORY$/org/aspectj/aspectjweaver/1.9.9.1/aspectjweaver-1.9.9.1.jar --add-opens java.base/java.lang=ALL-UNNAMED" />
     <extension name="coverage">
