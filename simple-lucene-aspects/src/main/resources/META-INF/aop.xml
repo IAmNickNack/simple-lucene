@@ -1,0 +1,15 @@
+<aspectj>
+    <aspects>
+        <aspect name="com.github.iamnicknack.slc.aspect.ResultAspect"/>
+        <aspect name="com.github.iamnicknack.slc.aspect.QueryFactoryAspect"/>
+        <aspect name="com.github.iamnicknack.slc.aspect.LeaseAspect"/>
+        <aspect name="com.github.iamnicknack.slc.aspect.TimerAspect"/>
+        <weaver options="-verbose">  <!-- -showWeaveInfo -->
+            <include within="com.github.iamnicknack.slc.api.query.*"/>
+            <include within="com.github.iamnicknack.slc.api.lease.*"/>
+            <include within="com.github.iamnicknack.slc.core.query..*"/>
+            <include within="com.github.iamnicknack.slc.core.collection..*"/>
+            <include within="com.github.iamnicknack.slc.aspect.*"/>
+        </weaver>
+    </aspects>
+</aspectj>
