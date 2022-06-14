@@ -201,6 +201,7 @@ public class FieldDescriptorBuilder {
             return new FieldDescriptorRecord<>(name,
                     id,
                     type.isAssignableFrom(String.class),
+                    multiValue,
                     fieldReader,
                     subFields
             );
@@ -219,6 +220,7 @@ public class FieldDescriptorBuilder {
     private record FieldDescriptorRecord<T>(String name,
                                             boolean id,
                                             boolean facetable,
+                                            boolean multiValue,
                                             FieldReader fieldReader,
                                             List<SubFieldDescriptor<T>> subfields) implements FieldDescriptor<T> {
 

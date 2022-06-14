@@ -63,6 +63,8 @@ public class DocumentDescriptorBuilder {
                 .forEach(facetPair -> {
                     logger.info("Configuring facet: {} -> {}", facetPair.fieldDescriptor().name(), facetPair.subFieldDescriptor().name());
                     luceneBackend.facetsConfig()
+                            .setMultiValued(facetPair.subFieldDescriptor().name(), facetPair.fieldDescriptor().multiValue());
+                    luceneBackend.facetsConfig()
                             .setIndexFieldName(facetPair.fieldDescriptor().name(), facetPair.subFieldDescriptor().name());
                 });
 
