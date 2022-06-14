@@ -20,4 +20,18 @@ class FieldDescriptorTest {
         Mockito.when(field.subfields()).thenCallRealMethod();
         assertFalse(field.subfields().iterator().hasNext());
     }
+
+    @Test
+    void defaultMultiValueIsFalse() {
+        var field = Mockito.mock(FieldDescriptor.class);
+        Mockito.when(field.multiValue()).thenCallRealMethod();
+        assertFalse(field.multiValue());
+    }
+
+    @Test
+    void defaultFacetableIsFalse() {
+        var field = Mockito.mock(FieldDescriptor.class);
+        Mockito.when(field.facetable()).thenCallRealMethod();
+        assertFalse(field.facetable());
+    }
 }

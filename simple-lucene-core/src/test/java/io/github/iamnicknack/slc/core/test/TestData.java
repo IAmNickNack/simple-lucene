@@ -46,6 +46,7 @@ public class TestData {
                         .multiValue()
                         .stringField()
                         .keyword()
+                        .facet()
                         .build()
                 )
                 .build();
