@@ -1,12 +1,13 @@
 package io.github.iamnicknack.slc.core.query;
 
+import io.github.iamnicknack.slc.api.backend.LuceneBackend;
 import io.github.iamnicknack.slc.api.index.DomainOperations;
 import io.github.iamnicknack.slc.api.query.Hit;
 import io.github.iamnicknack.slc.api.query.QueryExecutor;
 import io.github.iamnicknack.slc.api.query.Result;
 import io.github.iamnicknack.slc.core.backend.LuceneBackends;
 import io.github.iamnicknack.slc.core.index.BucketUpdateOperations;
-import io.github.iamnicknack.slc.core.index.MapDomainOperations;
+import io.github.iamnicknack.slc.core.test.BuilderDomainOperations;
 import io.github.iamnicknack.slc.core.test.TestData;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.search.MatchAllDocsQuery;
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import io.github.iamnicknack.slc.api.backend.LuceneBackend;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -38,7 +38,7 @@ class DefaultQueryExecutorTest {
 
     DefaultQueryExecutorTest() throws IOException {
         this.backend = LuceneBackends.memory();
-        this.domainOperations = new MapDomainOperations(TestData.documentDescriptor(backend));
+        this.domainOperations = BuilderDomainOperations.create(backend);
         this.updateOperations = new BucketUpdateOperations<>(domainOperations);
         this.queryExecutor = new DefaultQueryExecutor<>(
                 TestData.valueKeywordQueryFactory(),
@@ -47,7 +47,6 @@ class DefaultQueryExecutorTest {
     }
 
     @BeforeEach
-    @SuppressWarnings("resource")
     void beforeEach() {
         try(var lease = backend.updateLeaseFactory().lease()) {
             lease.execute(leasedValue -> leasedValue.indexWriter().deleteAll());

@@ -6,6 +6,7 @@ import io.github.iamnicknack.slc.api.lease.Lease;
 import io.github.iamnicknack.slc.api.query.Result;
 import io.github.iamnicknack.slc.core.backend.LuceneBackends;
 import io.github.iamnicknack.slc.core.query.DefaultQueryExecutor;
+import io.github.iamnicknack.slc.core.test.BuilderDomainOperations;
 import io.github.iamnicknack.slc.core.test.TestData;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.MatchAllDocsQuery;
@@ -30,12 +31,11 @@ class SetLikeUpdateOperationsTest {
 
     public SetLikeUpdateOperationsTest() throws IOException {
         this.backend = LuceneBackends.memory();
-        this.domainOperations = new MapDomainOperations(TestData.documentDescriptor(backend));
+        this.domainOperations = BuilderDomainOperations.create(backend);
         this.operations = new SetLikeUpdateOperations<>(domainOperations, backend);
     }
 
     @BeforeEach
-    @SuppressWarnings("resource")
     void beforeEach() {
         try(var lease = backend.updateLeaseFactory().lease()) {
             lease.execute(leasedValue -> leasedValue.indexWriter().deleteAll());

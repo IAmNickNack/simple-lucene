@@ -22,11 +22,10 @@ public class TimerAspect {
     public Object aroundCollectionOperations(ProceedingJoinPoint joinPoint) throws Throwable {
 
         var description = joinPoint.getSignature().toShortString();
-                // "%s: %d".formatted(joinPoint.getSourceLocation().getFileName(), joinPoint.getSourceLocation().getLine());
         var start = System.currentTimeMillis();
         var result = joinPoint.proceed();
         var duration = System.currentTimeMillis() - start;
-        logger.debug("[{}] Execution time for Result#{}: {} ms", description, System.identityHashCode(result), duration);
+        logger.debug("[{}] Execution time: {} ms", description, duration);
         return result;
     }
 

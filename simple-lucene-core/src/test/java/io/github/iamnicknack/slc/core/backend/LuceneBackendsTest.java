@@ -1,12 +1,12 @@
 package io.github.iamnicknack.slc.core.backend;
 
-import io.github.iamnicknack.slc.core.collection.LuceneCollection;
 import com.github.marschall.memoryfilesystem.MemoryFileSystemBuilder;
+import io.github.iamnicknack.slc.core.collection.LuceneCollection;
+import io.github.iamnicknack.slc.core.test.BuilderDomainOperations;
+import io.github.iamnicknack.slc.core.test.TestData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import io.github.iamnicknack.slc.core.index.MapDomainOperations;
-import io.github.iamnicknack.slc.core.test.TestData;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
@@ -68,7 +68,7 @@ class LuceneBackendsTest {
             assertEquals(2, stream.count());
         }
 
-        var domain = new MapDomainOperations(TestData.documentDescriptor(backend));
+        var domain = BuilderDomainOperations.create(backend);
         var collection = new LuceneCollection<>(domain, backend);
         collection.add(TestData.createValue("TEST"));
         assertEquals(1, collection.size());

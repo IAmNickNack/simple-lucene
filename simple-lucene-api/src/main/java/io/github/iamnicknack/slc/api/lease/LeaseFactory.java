@@ -49,10 +49,18 @@ public interface LeaseFactory<T> {
         }
     }
 
+    /**
+     * Function returning the component being leased
+     * @param <T> the leased type
+     */
     interface LeaseSupplier<T> {
         T lease() throws Exception;
     }
 
+    /**
+     * Consumer able to free resources used by the leased type
+     * @param <T> the leased type
+     */
     interface ReleaseConsumer<T> {
         void release(T value) throws Exception;
     }

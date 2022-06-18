@@ -1,13 +1,9 @@
 package io.github.iamnicknack.slc.core.test;
 
-import io.github.iamnicknack.slc.api.document.DocumentDescriptor;
 import io.github.iamnicknack.slc.api.query.QueryFactory;
-import io.github.iamnicknack.slc.core.document.DocumentDescriptorBuilder;
-import io.github.iamnicknack.slc.core.document.FieldDescriptorBuilder;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.TermQuery;
 import org.mockito.ArgumentMatcher;
-import io.github.iamnicknack.slc.api.backend.LuceneBackend;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,41 +12,6 @@ import java.util.Map;
 public class TestData {
 
     private TestData() {}
-
-    /**
-     * Document descriptor for test domain
-     */
-    public static DocumentDescriptor documentDescriptor(LuceneBackend backend) {
-        DocumentDescriptorBuilder builder = new DocumentDescriptorBuilder(backend);
-        return builder.field(new FieldDescriptorBuilder()
-                        .name("value")
-                        .id()
-                        .stringField()
-                        .keyword()
-                        .build()
-                )
-                .field(new FieldDescriptorBuilder()
-                        .name("sequence")
-                        .intField()
-                        .point()
-                        .build()
-                )
-                .field(new FieldDescriptorBuilder()
-                        .name("description")
-                        .stringField()
-                        .text()
-                        .build()
-                )
-                .field(new FieldDescriptorBuilder()
-                        .name("others")
-                        .multiValue()
-                        .stringField()
-                        .keyword()
-                        .facet()
-                        .build()
-                )
-                .build();
-    }
 
     public static Map<String, Object> createValue(String value, int sequence, String description, List<String> others) {
         return Map.of("value", value, "sequence", sequence, "description", description, "others", others);

@@ -1,6 +1,7 @@
 package io.github.iamnicknack.slc.core.index;
 
 import io.github.iamnicknack.slc.api.query.QueryExecutor;
+import io.github.iamnicknack.slc.core.test.BuilderDomainOperations;
 import io.github.iamnicknack.slc.core.test.TestData;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.IntPoint;
@@ -28,7 +29,7 @@ class BucketUpdateOperationsTest {
 
     public BucketUpdateOperationsTest() throws IOException {
         this.backend = LuceneBackends.memory();
-        var domainOperations = new MapDomainOperations(TestData.documentDescriptor(backend));
+        var domainOperations = BuilderDomainOperations.create(backend);
         this.operations = new BucketUpdateOperations<>(domainOperations);
 
         this.queryExecutor = new DefaultQueryExecutor<>(
@@ -41,7 +42,6 @@ class BucketUpdateOperationsTest {
     }
 
     @BeforeEach
-    @SuppressWarnings("resource")
     void beforeEach() {
         try(var lease = backend.updateLeaseFactory().lease()) {
             lease.execute(leasedValue -> leasedValue.indexWriter().deleteAll());

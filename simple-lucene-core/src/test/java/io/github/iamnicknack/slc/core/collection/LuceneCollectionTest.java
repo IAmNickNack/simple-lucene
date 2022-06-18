@@ -1,16 +1,16 @@
 package io.github.iamnicknack.slc.core.collection;
 
+import io.github.iamnicknack.slc.api.backend.LuceneBackend;
+import io.github.iamnicknack.slc.api.index.DomainOperations;
+import io.github.iamnicknack.slc.api.query.Hit;
+import io.github.iamnicknack.slc.core.backend.LuceneBackends;
+import io.github.iamnicknack.slc.core.test.BuilderDomainOperations;
+import io.github.iamnicknack.slc.core.test.TestData;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import io.github.iamnicknack.slc.api.backend.LuceneBackend;
-import io.github.iamnicknack.slc.api.index.DomainOperations;
-import io.github.iamnicknack.slc.api.query.Hit;
-import io.github.iamnicknack.slc.core.backend.LuceneBackends;
-import io.github.iamnicknack.slc.core.index.MapDomainOperations;
-import io.github.iamnicknack.slc.core.test.TestData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ class LuceneCollectionTest {
     @BeforeAll
     static void beforeAll() throws IOException {
         backend = LuceneBackends.memory();
-        documentOperations = new MapDomainOperations(TestData.documentDescriptor(backend));
+        documentOperations = BuilderDomainOperations.create(backend);
     }
 
     @AfterAll

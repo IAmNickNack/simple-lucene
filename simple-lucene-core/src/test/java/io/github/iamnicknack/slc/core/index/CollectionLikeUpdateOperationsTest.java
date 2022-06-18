@@ -4,6 +4,7 @@ import io.github.iamnicknack.slc.api.backend.LuceneBackend;
 import io.github.iamnicknack.slc.api.index.DomainOperations;
 import io.github.iamnicknack.slc.core.backend.LuceneBackends;
 import io.github.iamnicknack.slc.core.query.DefaultQueryExecutor;
+import io.github.iamnicknack.slc.core.test.BuilderDomainOperations;
 import io.github.iamnicknack.slc.core.test.TestData;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.junit.jupiter.api.Assertions;
@@ -26,12 +27,11 @@ class CollectionLikeUpdateOperationsTest {
 
     CollectionLikeUpdateOperationsTest() throws IOException {
         this.backend = LuceneBackends.memory();
-        this.domainOperations = new MapDomainOperations(TestData.documentDescriptor(backend));
+        this.domainOperations = BuilderDomainOperations.create(backend);
         this.operations = new CollectionLikeUpdateOperations<>(domainOperations, backend);
     }
 
     @BeforeEach
-    @SuppressWarnings("resource")
     void beforeEach() {
         try(var lease = backend.updateLeaseFactory().lease()) {
             lease.execute(leasedValue -> leasedValue.indexWriter().deleteAll());

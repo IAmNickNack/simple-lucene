@@ -57,8 +57,8 @@ public @interface IndexProperty {
     boolean exclude() default false;
 
     /**
-     * Additional fields under which to alias this property
-     * @return defaults to {@code {}}
+     * Additional fields under which to alias this property.
+     * @return defaults to {@code {}} (empty list)
      */
     String[] fields() default {};
 

@@ -1,11 +1,11 @@
 package io.github.iamnicknack.slc.core.query;
 
-import io.github.iamnicknack.slc.core.test.TestData;
-import org.junit.jupiter.api.Test;
 import io.github.iamnicknack.slc.api.backend.LuceneBackend;
 import io.github.iamnicknack.slc.core.backend.LuceneBackends;
 import io.github.iamnicknack.slc.core.index.BucketUpdateOperations;
-import io.github.iamnicknack.slc.core.index.MapDomainOperations;
+import io.github.iamnicknack.slc.core.test.BuilderDomainOperations;
+import io.github.iamnicknack.slc.core.test.TestData;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,9 +18,7 @@ class QueryFactoriesTest {
 
     QueryFactoriesTest() throws IOException {
         this.backend = LuceneBackends.memory();
-        var bucketOperations = new BucketUpdateOperations<>(
-                new MapDomainOperations(TestData.documentDescriptor(backend))
-        );
+        var bucketOperations = new BucketUpdateOperations<>(BuilderDomainOperations.create(backend));
         try(var lease = backend.updateLeaseFactory().lease()) {
             lease.execute(bucketOperations.addAll(List.of(
                     TestData.createValue("TEST", 1, "TEST"),

@@ -5,14 +5,13 @@ import io.github.iamnicknack.slc.api.query.Result;
 import io.github.iamnicknack.slc.core.backend.LuceneBackends;
 import io.github.iamnicknack.slc.core.collection.LuceneCollection;
 import io.github.iamnicknack.slc.core.query.DefaultQueryExecutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import io.github.iamnicknack.slc.core.query.QueryFactories;
 import io.github.iamnicknack.slc.examples.data.country.Country;
 import io.github.iamnicknack.slc.examples.data.country.CountryData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
 public class Simple {
 
@@ -20,8 +19,7 @@ public class Simple {
 
     public static void main(String[] args) throws IOException {
 
-        var backend = LuceneBackends.directory(Path.of("./test-indices/country/simple"));
-//        var backend = LuceneBackends.memory();
+        var backend = LuceneBackends.memory();
 
         /*
          ***************************************************************************************************************
@@ -30,10 +28,7 @@ public class Simple {
 
         var countryOperations = AnnotatedRecordOperations.create(Country.class, backend);
         var countryCollection = new LuceneCollection<>(countryOperations, backend);
-        if(countryCollection.isEmpty()) {
-            // Use collections to add data to the index
-            countryCollection.addAll(CountryData.countries());
-        }
+        countryCollection.addAll(CountryData.countries());
 
         /*
          ***************************************************************************************************************

@@ -2,7 +2,7 @@ package io.github.iamnicknack.slc.core.query;
 
 import io.github.iamnicknack.slc.core.backend.LuceneBackends;
 import io.github.iamnicknack.slc.core.index.BucketUpdateOperations;
-import io.github.iamnicknack.slc.core.index.MapDomainOperations;
+import io.github.iamnicknack.slc.core.test.BuilderDomainOperations;
 import io.github.iamnicknack.slc.core.test.TestData;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.junit.jupiter.api.Assertions;
@@ -45,7 +45,7 @@ class DefaultPagedQueryExecutorTest {
 
     private void countPagesWithSize(int expectedPageCount, int numDocs, int pageSize) throws IOException {
         var backend = LuceneBackends.memory();
-        var domainOperations = new MapDomainOperations(TestData.documentDescriptor(backend));
+        var domainOperations = BuilderDomainOperations.create(backend);
         var updateOperations = new BucketUpdateOperations<>(domainOperations);
 
         var list = IntStream.range(0, numDocs)

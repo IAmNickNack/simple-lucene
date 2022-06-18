@@ -50,6 +50,7 @@ public interface Lease<T> extends AutoCloseable {
          * Execute this instance using the result of {@code other} as the parameter
          * @param other the function providing the input parameter to this instance
          * @return a composition of {@code this} and {@code other}
+         * @param <V> the return type of the lease function
          */
         default <V> LeaseFunction<V, R> compose(LeaseFunction<? super V, ? extends T> other) {
             return value -> execute(other.execute(value));
@@ -59,6 +60,7 @@ public interface Lease<T> extends AutoCloseable {
          * Execute the {@code other} using the result of this function
          * @param other the function accepting the output of this instance
          * @return a composition of {@code other} and {@code this}
+         * @param <V> the return type of the lease function
          */
         default <V> LeaseFunction<T, V> andThen(LeaseFunction<? super R, ? extends V> other) {
             return value -> other.execute(execute(value));
@@ -68,6 +70,7 @@ public interface Lease<T> extends AutoCloseable {
          * Convert an instance to an instance which returns the lease argument. This enables 
          * {@link java.util.function.Function#andThen(Function)} to be used when chaining operations.
          * @see UpdateOperations#chain(Collection, Function)
+         * @return a wrapper around the lease function which returns the leased value rather than the function result
          */
         default LeaseFunction<T, T> chainable() {
             return leasedValue -> {

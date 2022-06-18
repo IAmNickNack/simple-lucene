@@ -8,14 +8,14 @@ import java.util.Collections;
  * Metadata describing how a field maps to a Lucene index.
  *
  * <p>This will often include more than one {@link IndexableField}, represented by {@link SubFieldDescriptor}s.
- * For example:
+ * For example:</p>
  * <ul>
  *     <li>Numeric fields, indexed as document values but also available to read from their stored value</li>
  *     <li>Text fields, indexed as both {@link org.apache.lucene.document.TextField} and
  *     {@link org.apache.lucene.document.StringField} where it is probably simpler to use a
  *     {@link org.apache.lucene.document.StoredField} to remove ambiguity when reading data</li>
  * </ul>
- * </p>
+ *
  * @param <T> the domain type
  */
 public interface FieldDescriptor<T> extends

@@ -13,10 +13,16 @@ import java.util.stream.StreamSupport;
  */
 public interface Result<T> extends Iterable<Hit<T>>, AutoCloseable {
 
+    /**
+     * Total hits reported by Lucene for this search result
+     */
     default long totalHits() {
         return 0;
     }
 
+    /**
+     * Close any resources used by the instance
+     */
     default void close() {}
 
     /**
@@ -67,11 +73,18 @@ public interface Result<T> extends Iterable<Hit<T>>, AutoCloseable {
 
     /**
      * Function to create an iterator of type {@link R} from one of type {@link T}
-     * @param <T> the provided type
-     * @param <R> the desired type
+     * @param <T> the input type
+     * @param <R> the output type
      */
     interface IteratorFactory<T, R> {
 
+        /**
+         * Create an instance using the provided mapping function to perform conversion between {@link T} and {@link R}
+         * @param mapper the mapping function
+         * @return an {@link IteratorFactory} to convert {@link T} to {@link R}
+         * @param <T> the input type
+         * @param <R> the output type
+         */
         static <T, R> IteratorFactory<T, R> mapping(Function<T, R> mapper) {
             return iterator -> new Iterator<>() {
                 @Override
@@ -87,6 +100,11 @@ public interface Result<T> extends Iterable<Hit<T>>, AutoCloseable {
             };
         }
 
+        /**
+         * Convert the source iterator to one of the target type
+         * @param iterator the iterator to be wrapped
+         * @return an iterator of the target type
+         */
         Iterator<Hit<R>> create(Iterator<Hit<T>> iterator);
     }
 }

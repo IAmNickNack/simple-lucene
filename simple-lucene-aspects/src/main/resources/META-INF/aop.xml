@@ -4,12 +4,15 @@
         <aspect name="io.github.iamnicknack.slc.aspect.QueryFactoryAspect"/>
         <aspect name="io.github.iamnicknack.slc.aspect.LeaseAspect"/>
         <aspect name="io.github.iamnicknack.slc.aspect.TimerAspect"/>
+        <aspect name="io.github.iamnicknack.slc.aspect.AbstractLuceneCollectionAspect"/>
         <weaver options="-verbose">  <!-- -showWeaveInfo -->
             <include within="io.github.iamnicknack.slc.api.query.*"/>
             <include within="io.github.iamnicknack.slc.api.lease.*"/>
             <include within="io.github.iamnicknack.slc.core.query..*"/>
             <include within="io.github.iamnicknack.slc.core.collection..*"/>
             <include within="io.github.iamnicknack.slc.aspect.*"/>
+            <include within="io.github.iamnicknack.slc.api.index.*"/>
+            <include within="io.github.iamnicknack.slc.core.index.*"/>
         </weaver>
     </aspects>
 </aspectj>
