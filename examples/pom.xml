@@ -18,11 +18,14 @@
         <module>datasets</module>
         <module>country-search</module>
         <module>fuzzy-join</module>
+        <module>domain-operations</module>
     </modules>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
+        <jacoco-branch-coverage>0</jacoco-branch-coverage>
+        <jacoco-line-coverage>0</jacoco-line-coverage>
     </properties>
 
     <dependencies>

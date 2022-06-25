@@ -15,28 +15,28 @@ public class CountryData {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 
-    public static List<Country> countries() throws IOException {
+    public static List<Country> countries() {
         return load("/ne_110m_admin_0_countries.json", Country.class);
     }
 
-    public static List<Country> mapUnits() throws IOException {
+    public static List<Country> mapUnits() {
         return load("/ne_110m_admin_0_map_units.json", Country.class);
     }
 
-    public static List<Country> mapUnits50m() throws IOException {
+    public static List<Country> mapUnits50m() {
         return load("/ne_50m_admin_0_map_units.json", Country.class);
     }
 
-    public static List<Place> places() throws IOException {
+    public static List<Place> places() {
         return load("/ne_110m_populated_places_simple.json", Place.class);
     }
 
-    public static List<Place> places10m() throws IOException {
+    public static List<Place> places10m() {
         return load("/ne_10m_populated_places_simple.json", Place.class);
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends Sourceable<?>> List<T> load(String resourceName, Class<T> type) throws IOException {
+    private static <T extends Sourceable<?>> List<T> load(String resourceName, Class<T> type) {
 
         try (InputStream is = CountryData.class.getResourceAsStream(resourceName)){
             ObjectNode root = objectMapper.readValue(is, ObjectNode.class);
@@ -46,6 +46,9 @@ public class CountryData {
                     .map(props -> objectMapper.convertValue(props, type))
                     .map(t -> (T)t.withSource(resourceName.substring(1)))
                     .toList();
+        }
+        catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

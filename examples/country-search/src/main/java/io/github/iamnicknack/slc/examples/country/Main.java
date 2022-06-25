@@ -1,22 +1,22 @@
 package io.github.iamnicknack.slc.examples.country;
 
 import io.github.iamnicknack.slc.annotation.AnnotatedRecordOperations;
+import io.github.iamnicknack.slc.api.backend.LuceneBackend;
 import io.github.iamnicknack.slc.api.query.QueryExecutor;
 import io.github.iamnicknack.slc.api.query.QueryFactory;
 import io.github.iamnicknack.slc.api.query.Result;
 import io.github.iamnicknack.slc.core.backend.LuceneBackends;
 import io.github.iamnicknack.slc.core.collection.LuceneCollection;
 import io.github.iamnicknack.slc.core.query.DefaultQueryExecutor;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import io.github.iamnicknack.slc.api.backend.LuceneBackend;
 import io.github.iamnicknack.slc.core.query.QueryFactories;
 import io.github.iamnicknack.slc.examples.data.country.Country;
 import io.github.iamnicknack.slc.examples.data.country.CountryData;
 import io.github.iamnicknack.slc.examples.data.country.Place;
 import io.github.iamnicknack.slc.examples.data.country.Sourceable;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
