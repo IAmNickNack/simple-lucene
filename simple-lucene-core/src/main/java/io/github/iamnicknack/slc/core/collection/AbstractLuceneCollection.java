@@ -37,7 +37,7 @@ public abstract class AbstractLuceneCollection<T> extends AbstractCollection<T> 
     @Override
     public boolean add(T t) {
         var operation = updateOperations.add(t);
-        backend.updateLeaseFactory().execute(operation);
+        backend.update(operation);
         return true;
     }
 
@@ -45,7 +45,7 @@ public abstract class AbstractLuceneCollection<T> extends AbstractCollection<T> 
     public boolean addAll(Collection<? extends T> c) {
         var values = c.stream().map(v -> (T)v).toList();
         var operation = updateOperations.addAll(values);
-        backend.updateLeaseFactory().execute(operation);
+        backend.update(operation);
 
         return true;
     }
@@ -55,7 +55,7 @@ public abstract class AbstractLuceneCollection<T> extends AbstractCollection<T> 
     @SuppressWarnings("unchecked")
     public boolean remove(Object value) {
         var operation = updateOperations.delete((T)value);
-        backend.updateLeaseFactory().execute(operation);
+        backend.update(operation);
 
         return true;
     }
@@ -68,7 +68,7 @@ public abstract class AbstractLuceneCollection<T> extends AbstractCollection<T> 
                 .toList();
 
         var operation = updateOperations.deleteAll(values);
-        backend.updateLeaseFactory().execute(operation);
+        backend.update(operation);
 
         return values.size() > 0;
     }
@@ -77,16 +77,14 @@ public abstract class AbstractLuceneCollection<T> extends AbstractCollection<T> 
     @SuppressWarnings("unchecked")
     public boolean contains(Object o) {
         Term term = idTerm((T)o);
-        return backend.searcherLeaseFactory()
-                .execute(components -> components.indexSearcher().count(new TermQuery(term))) > 0;
+        return backend.search(components -> components.indexSearcher().count(new TermQuery(term))) > 0;
     }
 
     @Override
     public boolean containsAll(Collection<?> c) {
         BooleanQuery query = queryForCollection(c);
 
-        return backend.searcherLeaseFactory()
-                .execute(components -> components.indexSearcher().count(query) == query.clauses().size());
+        return backend.search(components -> components.indexSearcher().count(query) == query.clauses().size());
     }
 
     @Override
@@ -96,21 +94,19 @@ public abstract class AbstractLuceneCollection<T> extends AbstractCollection<T> 
                 .add(queryForCollection(c), BooleanClause.Occur.MUST_NOT)
                 .build();
 
-        backend.updateLeaseFactory().execute(components -> components.indexWriter().deleteDocuments(query));
+        backend.update(components -> components.indexWriter().deleteDocuments(query));
 
         return true;
     }
 
     @Override
     public void clear() {
-        backend.updateLeaseFactory()
-                .execute(components -> components.indexWriter().deleteDocuments(new MatchAllDocsQuery()));
+        backend.update(components -> components.indexWriter().deleteDocuments(new MatchAllDocsQuery()));
     }
 
     @Override
     public int size() {
-        return backend.searcherLeaseFactory()
-                .execute(components -> components.indexSearcher().count(new MatchAllDocsQuery()));
+        return backend.search(components -> components.indexSearcher().count(new MatchAllDocsQuery()));
     }
 
     @Override

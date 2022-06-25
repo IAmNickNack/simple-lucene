@@ -104,16 +104,15 @@ class DefaultQueryExecutorTest {
             }
         };
 
-        var list = result.list();
+        var list = result.toList();
 
         assertEquals(1, list.size());
         verify(invocationCheck).run();
     }
 
     @Test
-    @SuppressWarnings("resource")
     void createsCollectionWithoutTry()  {
-        var collection = queryExecutor.execute(TestData.createValue("TEST")).list();
+        var collection = queryExecutor.execute(TestData.createValue("TEST")).toList();
         assertEquals(1, collection.size());
     }
 

@@ -47,9 +47,7 @@ public class DefaultResult implements Result<Document> {
                 ScoreDoc doc = topDocs.scoreDocs[index++];
                 return new HitRecord<>(
                         doc.score,
-                        lease.execute(components ->
-                                components.indexSearcher().doc(doc.doc)
-                        )
+                        lease.execute(components -> components.indexSearcher().doc(doc.doc))
                 );
             }
         };

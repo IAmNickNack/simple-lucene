@@ -5,6 +5,8 @@
         <aspect name="io.github.iamnicknack.slc.aspect.LeaseAspect"/>
         <aspect name="io.github.iamnicknack.slc.aspect.TimerAspect"/>
         <aspect name="io.github.iamnicknack.slc.aspect.AbstractLuceneCollectionAspect"/>
+        <aspect name="io.github.iamnicknack.slc.aspect.LeaseFunctionAspect"/>
+        <aspect name="io.github.iamnicknack.slc.aspect.DeprecationAspect"/>
         <weaver options="-verbose">  <!-- -showWeaveInfo -->
             <include within="io.github.iamnicknack.slc.api.query.*"/>
             <include within="io.github.iamnicknack.slc.api.lease.*"/>
@@ -13,6 +15,8 @@
             <include within="io.github.iamnicknack.slc.aspect.*"/>
             <include within="io.github.iamnicknack.slc.api.index.*"/>
             <include within="io.github.iamnicknack.slc.core.index.*"/>
+            <include within="io.github.iamnicknack.slc.api.backend.*"/>
+            <include within="io.github.iamnicknack.slc.core.backend.*"/>
         </weaver>
     </aspects>
 </aspectj>

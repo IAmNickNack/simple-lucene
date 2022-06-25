@@ -46,11 +46,47 @@ public interface LuceneBackend extends Closeable {
     FacetsConfig facetsConfig();
 
     /**
+     * Execute the {@link io.github.iamnicknack.slc.api.lease.Lease.LeaseFunction} via
+     * {@link #searcherLeaseFactory()}
+     * @param searchFunction the function to execute
+     * @return the function result
+     * @param <T> the result type
+     */
+    default <T> T search(Lease.LeaseFunction<SearchComponents, T> searchFunction) {
+        try(var lease = searcherLeaseFactory().lease()) {
+            return lease.execute(searchFunction);
+        }
+    }
+
+    /**
+     * Execute the {@link io.github.iamnicknack.slc.api.lease.Lease.LeaseFunction} via
+     * {@link #updateLeaseFactory()}
+     * @param updateFunction the function to execute
+     * @return the function result
+     * @param <T> the result type
+     */
+    default <T> T update(Lease.LeaseFunction<UpdateComponents, T> updateFunction) {
+        try(var lease = updateLeaseFactory().lease()) {
+            return lease.execute(updateFunction);
+        }
+    }
+
+    /**
      * Components required query operations
      */
     interface SearchComponents {
+        /**
+         * Used to perform search operations
+         */
         IndexSearcher indexSearcher();
+
+        /**
+         * Used with {@link #facetsConfig()} to perform facet queries
+         */
         TaxonomyReader taxonomyReader();
+        /**
+         * Used with {@link #taxonomyReader()} to perform facet queries
+         */
         FacetsConfig facetsConfig();
     }
 
@@ -58,10 +94,24 @@ public interface LuceneBackend extends Closeable {
      * Components required for update operations
      */
     interface UpdateComponents {
+        /**
+         * Used to write changes to the index
+         */
         IndexWriter indexWriter();
+
+        /**
+         * Used with {@link #facetsConfig()} to update taxonomy facets during update operations
+         */
         TaxonomyWriter taxonomyWriter();
+        /**
+         * Used with {@link #taxonomyWriter()} to update taxonomy facets during update operations
+         */
         FacetsConfig facetsConfig();
 
+        /**
+         * Utility to update taxonomy during document write operations
+         * @param document the document being written
+         */
         default Document build(Document document) throws IOException {
             return facetsConfig().build(taxonomyWriter(), document);
         }
