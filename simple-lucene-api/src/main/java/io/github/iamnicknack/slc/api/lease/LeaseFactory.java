@@ -40,6 +40,7 @@ public interface LeaseFactory<T> {
      * @param <R> the function return type
      * @throws Lease.LeaseException on execution failure
      */
+    @Deprecated
     default <R> R execute(Lease.LeaseFunction<T, R> function) throws Lease.LeaseException {
         try(var lease = this.lease()) {
             return lease.execute(function);

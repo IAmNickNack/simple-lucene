@@ -12,7 +12,7 @@ import static org.mockito.Mockito.*;
 class QueryExecutorTest {
 
     @Test
-    @SuppressWarnings({"resource", "unchecked"})
+    @SuppressWarnings("unchecked")
     void defaultInvokesExecuteWithOptions_withInvocationCheck() {
         var invocationCheck = (BiConsumer<Object, QueryOptions>) mock(BiConsumer.class);
         QueryExecutor<Object, Object> executor = (query, options) -> {
@@ -26,7 +26,7 @@ class QueryExecutorTest {
     }
 
     @Test
-    @SuppressWarnings({"resource", "unchecked"})
+    @SuppressWarnings("unchecked")
     void defaultInvokesExecuteWithOptions_withMockQueryExecutor() {
         QueryExecutor<Object, Object> executor = mock(QueryExecutor.class);
         when(executor.execute("TEST")).thenCallRealMethod();
@@ -38,7 +38,7 @@ class QueryExecutorTest {
 
 
     @Test
-    @SuppressWarnings({"resource", "unchecked"})
+    @SuppressWarnings("unchecked")
     void withOptionsOverridesDefaults() {
         var invocationCheck = (BiConsumer<Object, QueryOptions>) mock(BiConsumer.class);
         QueryExecutor<Object, Object> executor = (query, options) -> {
@@ -71,7 +71,6 @@ class QueryExecutorTest {
 
 
     @Test
-    @SuppressWarnings("resource")
     void withIteratorMapsValues() {
         record OutputType(String value) {}
         var iteratorFactory = Result.IteratorFactory.mapping(o -> new OutputType(o.toString()));
@@ -79,7 +78,7 @@ class QueryExecutorTest {
         var executor = new FakeQueryExecutor(data)
                 .withIterator(iteratorFactory);
 
-        var list = executor.execute(null).list();
+        var list = executor.execute(null).toList();
         for (int i = 0; i < list.size(); i++) {
             assertEquals(data.get(i), list.get(i).value().value);
         }

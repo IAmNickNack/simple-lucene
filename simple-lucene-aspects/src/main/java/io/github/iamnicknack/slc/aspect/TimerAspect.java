@@ -18,9 +18,11 @@ public class TimerAspect {
     @Pointcut("execution(* io.github.iamnicknack.slc.api.query.QueryExecutor+.execute(..))")
     void onQueryExecute() {}
 
-    @Around(value = "onCollectionOperations() || onQueryExecute()")
-    public Object aroundCollectionOperations(ProceedingJoinPoint joinPoint) throws Throwable {
+    @Pointcut("execution(* io.github.iamnicknack.slc.api.lease.Lease.execute(..))")
+    void onLeaseExecute() {}
 
+    @Around(value = "onCollectionOperations() || onQueryExecute() || onLeaseExecute()")
+    public Object aroundCollectionOperations(ProceedingJoinPoint joinPoint) throws Throwable {
         var description = joinPoint.getSignature().toShortString();
         var start = System.currentTimeMillis();
         var result = joinPoint.proceed();

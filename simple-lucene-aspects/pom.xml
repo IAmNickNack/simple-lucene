@@ -16,6 +16,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <jacoco-branch-coverage>0</jacoco-branch-coverage>
         <jacoco-line-coverage>0</jacoco-line-coverage>
+        <aspectj.version>1.9.9.1</aspectj.version>
     </properties>
 
     <dependencies>
@@ -33,12 +34,12 @@
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
-            <version>1.9.9.1</version>
+            <version>${aspectj.version}</version>
         </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>
-            <version>1.9.9.1</version>
+            <version>${aspectj.version}</version>
         </dependency>
     </dependencies>
 

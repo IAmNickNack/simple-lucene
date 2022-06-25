@@ -33,7 +33,6 @@ public interface QueryExecutor<K, V> {
      * @param <T> the type represented by each document
      * @see Result#withIterator(Result.IteratorFactory)
      */
-    @SuppressWarnings("resource")
     default <T> QueryExecutor<K, T> withIterator(Result.IteratorFactory<V, T> iteratorFactory) {
         return (query, options) -> this.execute(query, options)
                 .withIterator(iteratorFactory);

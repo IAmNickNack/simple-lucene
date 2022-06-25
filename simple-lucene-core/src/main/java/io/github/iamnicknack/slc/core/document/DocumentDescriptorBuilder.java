@@ -1,12 +1,10 @@
 package io.github.iamnicknack.slc.core.document;
 
+import io.github.iamnicknack.slc.api.backend.LuceneBackend;
 import io.github.iamnicknack.slc.api.document.DocumentDescriptor;
 import io.github.iamnicknack.slc.api.document.FieldDescriptor;
 import io.github.iamnicknack.slc.api.document.SubFieldDescriptor;
 import org.apache.lucene.facet.FacetField;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import io.github.iamnicknack.slc.api.backend.LuceneBackend;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +17,6 @@ import java.util.stream.StreamSupport;
  * Builder for a {@link DocumentDescriptor} based on given {@link FieldDescriptor}s
  */
 public class DocumentDescriptorBuilder {
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final List<FieldDescriptor<?>> fieldDescriptors = new ArrayList<>();
 
@@ -61,7 +57,6 @@ public class DocumentDescriptorBuilder {
                         .map(subFieldDescriptor -> new FacetPair(fieldDescriptor, subFieldDescriptor))
                 )
                 .forEach(facetPair -> {
-                    logger.debug("Configuring facet: {} -> {}", facetPair.fieldDescriptor().name(), facetPair.subFieldDescriptor().name());
                     luceneBackend.facetsConfig()
                             .setMultiValued(facetPair.subFieldDescriptor().name(), facetPair.fieldDescriptor().multiValue());
                     luceneBackend.facetsConfig()

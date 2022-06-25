@@ -39,7 +39,7 @@ public interface Result<T> extends Iterable<Hit<T>>, AutoCloseable {
      * Provides this result as a collection and releases resources
      * @return a collection of {@link Hit}s
      */
-    default List<Hit<T>> list() {
+    default List<Hit<T>> toList() {
         try(var stream = this.stream()) {
             return stream.toList();
         }

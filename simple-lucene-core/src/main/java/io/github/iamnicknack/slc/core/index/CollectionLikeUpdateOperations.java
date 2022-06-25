@@ -62,7 +62,6 @@ public class CollectionLikeUpdateOperations<T> implements UpdateOperations<T> {
      * @return the parameter value
      */
     @Override
-    @SuppressWarnings("resource")
     public Lease.LeaseFunction<LuceneBackend.UpdateComponents, Void> add(T value) {
         return components -> {
             var id = documentOperations.id(value);
@@ -83,7 +82,6 @@ public class CollectionLikeUpdateOperations<T> implements UpdateOperations<T> {
      * @return the parameter value
      */
     @Override
-    @SuppressWarnings("resource")
     public Lease.LeaseFunction<LuceneBackend.UpdateComponents, Void> update(T value) {
         return components -> {
             try(var result = queryExecutor.execute(value)) {
@@ -111,7 +109,6 @@ public class CollectionLikeUpdateOperations<T> implements UpdateOperations<T> {
      * @return the parameter value
      */
     @Override
-    @SuppressWarnings("resource")
     public Lease.LeaseFunction<LuceneBackend.UpdateComponents, Void> delete(T value) {
         return components -> {
             try(var result = queryExecutor.execute(value)) {
@@ -131,7 +128,6 @@ public class CollectionLikeUpdateOperations<T> implements UpdateOperations<T> {
      * @return the number of distinct terms included in the deletion query
      */
     @Override
-    @SuppressWarnings("resource")
     public Lease.LeaseFunction<LuceneBackend.UpdateComponents, Integer> deleteAll(Collection<T> values) {
         var builder = new BooleanQuery.Builder();
         values.stream()
