@@ -1,4 +1,4 @@
-package slc.domain;
+package slc.domain.operations;
 
 import io.github.iamnicknack.slc.api.backend.LuceneBackend;
 import io.github.iamnicknack.slc.api.index.DomainOperations;

@@ -1,10 +1,11 @@
-package slc.domain;
+package slc.domain.operations;
 
 import io.github.iamnicknack.slc.api.index.DomainOperations;
 import org.apache.lucene.document.*;
 import org.apache.lucene.facet.FacetField;
 import org.apache.lucene.facet.FacetsConfig;
 import org.apache.lucene.index.IndexableField;
+import slc.domain.ShortCountry;
 
 import java.util.Arrays;
 

@@ -16,8 +16,6 @@
 
     <modules>
         <module>datasets</module>
-        <module>country-search</module>
-        <module>fuzzy-join</module>
         <module>domain-operations</module>
     </modules>
 
