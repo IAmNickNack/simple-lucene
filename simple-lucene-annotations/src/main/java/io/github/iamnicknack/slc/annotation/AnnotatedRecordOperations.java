@@ -15,9 +15,20 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Factory for {@link DomainOperations} derived from {@link IndexProperty} annotations
+ * @param <T> the introspected type
+ */
 public interface AnnotatedRecordOperations<T extends Record> extends DomainOperations<T> {
 
 
+    /**
+     * Create {@link DomainOperations} derived from {@link IndexProperty} annotations
+     * @param type the annotated type
+     * @param backend the index configuration which may be updated according to any required facets
+     * @return a {@link DomainOperations} instance
+     * @param <T> the annotated type
+     */
     static <T extends Record> AnnotatedRecordOperations<T> create(Class<T> type, LuceneBackend backend) {
 
         record AccessorDescriptor<T>(Method accessor, FieldDescriptor<T> fieldDescriptor) {}
