@@ -10,11 +10,8 @@
 ## What this is not
 
 * NOT a dedicated persistence layer.
-    * Lucene is not a good candidate for a persistence layer. Lucene is an index. It's primary function is to provide
-      features for data retrieval. To achieve this, write operations are considered a necessary evil and are only
-      possible either in *near*-real-time or with significant latency.
-    * [Hibernate](https://docs.jboss.org/hibernate/search/6.1/reference/en-US/html_single/) provides a full-featured
-      ORM.
+* [Hibernate](https://docs.jboss.org/hibernate/search/6.1/reference/en-US/html_single/) provides a full-featured
+  ORM.
 
 ## What are these abstractions for?
 
