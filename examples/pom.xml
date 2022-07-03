@@ -16,7 +16,7 @@
 
     <modules>
         <module>datasets</module>
-        <module>domain-operations</module>
+        <module>documentation</module>
     </modules>
 
     <properties>
