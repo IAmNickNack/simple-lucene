@@ -44,7 +44,7 @@
 
         <maven-javadoc.version>3.4.0</maven-javadoc.version>
         <maven-sources.version>3.2.1</maven-sources.version>
-        <surefire.version>3.0.0-M5</surefire.version>
+        <surefire.version>3.0.0-M7</surefire.version>
         <jacoco.version>0.8.8</jacoco.version>
 
         <jacoco-branch-coverage>0.6</jacoco-branch-coverage>
