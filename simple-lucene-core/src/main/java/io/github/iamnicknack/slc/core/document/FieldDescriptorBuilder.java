@@ -2,6 +2,7 @@ package io.github.iamnicknack.slc.core.document;
 
 import io.github.iamnicknack.slc.api.document.FieldDescriptor;
 import io.github.iamnicknack.slc.api.document.SubFieldDescriptor;
+import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
 import io.github.iamnicknack.slc.api.document.FieldParser;
 import io.github.iamnicknack.slc.api.document.FieldReader;
@@ -195,8 +196,8 @@ public class FieldDescriptorBuilder {
                     .toList();
 
             FieldReader fieldReader = multiValue
-                    ? new MultiValueFieldReader(fieldParser())
-                    : new SingleValueFieldReader(fieldParser());
+                    ? new MultiValueFieldReader(name, fieldParser())
+                    : new SingleValueFieldReader(name, fieldParser());
 
             return new FieldDescriptorRecord<>(name,
                     id,
@@ -224,8 +225,6 @@ public class FieldDescriptorBuilder {
                                             FieldReader fieldReader,
                                             List<SubFieldDescriptor<T>> subfields) implements FieldDescriptor<T> {
 
-
-
         @Override
         @SuppressWarnings("unchecked")
         public Iterable<IndexableField> fields(Object value) {
@@ -252,8 +251,8 @@ public class FieldDescriptorBuilder {
 
         @Override
         @SuppressWarnings("unchecked")
-        public T read(IndexableField[] fields) {
-            return (T)fieldReader.read(fields);
+        public T read(Document document) {
+            return (T)fieldReader.read(document);
         }
     }
 }
