@@ -5,7 +5,7 @@ import io.github.iamnicknack.slc.api.document.FieldDescriptor;
 import io.github.iamnicknack.slc.api.index.DomainOperations;
 import org.apache.lucene.document.Document;
 
-import java.util.AbstractMap;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -59,11 +59,8 @@ public class MapDomainOperations implements DomainOperations<Map<String, Object>
     public Map<String, Object> readDocument(Document document) {
 
         return documentDescriptor.fieldMap().entrySet().stream()
-                .map(descriptorEntry -> {
-                    var fields = document.getFields(descriptorEntry.getKey());
-                    return new AbstractMap.SimpleEntry<>(descriptorEntry.getKey(), descriptorEntry.getValue().read(fields));
-                })
+                .map(descriptorEntry -> new SimpleEntry<>(descriptorEntry.getKey(), descriptorEntry.getValue().read(document)))
                 .filter(e -> e.getValue() != null)
-                .collect(Collectors.toMap(AbstractMap.SimpleEntry::getKey, AbstractMap.SimpleEntry::getValue));
+                .collect(Collectors.toMap(SimpleEntry::getKey, SimpleEntry::getValue));
     }
 }

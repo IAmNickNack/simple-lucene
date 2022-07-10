@@ -72,9 +72,7 @@ public interface AnnotatedRecordOperations<T extends Record> extends DomainOpera
             @Override
             public Object[] apply(Document document) {
                 return accessors.stream()
-                        .map(accessorDescriptor -> accessorDescriptor.fieldDescriptor()
-                                .read(document.getFields(accessorDescriptor.fieldDescriptor().name()))
-                        )
+                        .map(accessorDescriptor -> accessorDescriptor.fieldDescriptor().read(document))
                         .toArray();
             }
         };
