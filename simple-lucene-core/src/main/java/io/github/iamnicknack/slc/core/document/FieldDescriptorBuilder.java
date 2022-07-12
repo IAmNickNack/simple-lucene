@@ -2,6 +2,7 @@ package io.github.iamnicknack.slc.core.document;
 
 import io.github.iamnicknack.slc.api.document.FieldDescriptor;
 import io.github.iamnicknack.slc.api.document.SubFieldDescriptor;
+import io.github.iamnicknack.slc.api.index.DomainOperations;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
 import io.github.iamnicknack.slc.api.document.FieldParser;
@@ -66,6 +67,10 @@ public class FieldDescriptorBuilder {
 
     public LongFieldDescriptorBuilder longField() {
         return new LongFieldDescriptorBuilder();
+    }
+
+    public <T> DomainOperationsFieldDescriptorBuilder<T> domainOperations(DomainOperations<T> domainOperations) {
+        return new DomainOperationsFieldDescriptorBuilder<>(domainOperations);
     }
 
     /**
@@ -167,6 +172,39 @@ public class FieldDescriptorBuilder {
         @Override
         public FieldParser<Long> fieldParser() {
             return field -> field.numericValue().longValue();
+        }
+    }
+
+    public class DomainOperationsFieldDescriptorBuilder<T> {
+        private final DomainOperations<T> domainOperations;
+
+        DomainOperationsFieldDescriptorBuilder(DomainOperations<T> domainOperations) {
+            this.domainOperations = domainOperations;
+        }
+
+        public FieldDescriptor<T> build() {
+            return new FieldDescriptor<>() {
+                @Override
+                public String name() {
+                    return name;
+                }
+
+                @Override
+                @SuppressWarnings("unchecked")
+                public Iterable<IndexableField> fields(Object value) {
+                    return domainOperations.createDocument((T) value);
+                }
+
+                @Override
+                public Object read(Document document) {
+                    return domainOperations.readDocument(document);
+                }
+
+                @Override
+                public Iterator<SubFieldDescriptor<T>> iterator() {
+                    return Collections.emptyIterator();
+                }
+            };
         }
     }
 
