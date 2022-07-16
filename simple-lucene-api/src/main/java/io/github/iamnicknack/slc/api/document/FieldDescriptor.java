@@ -19,38 +19,10 @@ import java.util.Collections;
  * @param <T> the domain type
  */
 public interface FieldDescriptor<T> extends
+        FieldAttributes,
         FieldReader,
         Iterable<SubFieldDescriptor<T>>
 {
-
-    /**
-     * Required index name for the field.
-     */
-    String name();
-
-    /**
-     * The field may be used for faceting
-     * @return defaults to false
-     */
-    default boolean facetable() {
-        return false;
-    }
-
-    /**
-     * The field is multi-valued
-     * @return defaults to false
-     */
-    default boolean multiValue() {
-        return false;
-    }
-
-    /**
-     * The field is a constituent of a unique identifier
-     */
-    default boolean id() {
-        return false;
-    }
-
     /**
      * Subfields used for searching and faceting.
      * @return defaults to {@link Collections#emptyIterator()}
