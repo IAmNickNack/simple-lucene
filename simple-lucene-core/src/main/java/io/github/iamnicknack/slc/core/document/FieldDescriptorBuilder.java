@@ -1,13 +1,16 @@
 package io.github.iamnicknack.slc.core.document;
 
 import io.github.iamnicknack.slc.api.document.FieldDescriptor;
-import io.github.iamnicknack.slc.api.document.SubFieldDescriptor;
-import io.github.iamnicknack.slc.api.index.DomainOperations;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexableField;
 import io.github.iamnicknack.slc.api.document.FieldParser;
 import io.github.iamnicknack.slc.api.document.FieldReader;
+import io.github.iamnicknack.slc.api.document.SubFieldDescriptor;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexableField;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -69,8 +72,8 @@ public class FieldDescriptorBuilder {
         return new LongFieldDescriptorBuilder();
     }
 
-    public <T> DomainOperationsFieldDescriptorBuilder<T> domainOperations(DomainOperations<T> domainOperations) {
-        return new DomainOperationsFieldDescriptorBuilder<>(domainOperations);
+    public ZonedDateTimeFieldDescriptorBuilder zonedDateTime() {
+        return new ZonedDateTimeFieldDescriptorBuilder();
     }
 
     /**
@@ -175,36 +178,59 @@ public class FieldDescriptorBuilder {
         }
     }
 
-    public class DomainOperationsFieldDescriptorBuilder<T> {
-        private final DomainOperations<T> domainOperations;
+    public class ZonedDateTimeFieldDescriptorBuilder extends TypedFieldDescriptorBuilder<ZonedDateTime> {
 
-        DomainOperationsFieldDescriptorBuilder(DomainOperations<T> domainOperations) {
-            this.domainOperations = domainOperations;
+        private final Clock clock;
+
+        public ZonedDateTimeFieldDescriptorBuilder() {
+            this(Clock.systemDefaultZone());
         }
 
-        public FieldDescriptor<T> build() {
-            return new FieldDescriptor<>() {
-                @Override
-                public String name() {
-                    return name;
-                }
+        public ZonedDateTimeFieldDescriptorBuilder(Clock clock) {
+            super(ZonedDateTime.class);
+            this.clock = clock;
+            if(!exclude) subFieldFactories.add(fieldName -> SubFieldDescriptors
+                    .storedString(fieldName)
+                    .compose(this::valueToString)
+            );
+        }
 
-                @Override
-                @SuppressWarnings("unchecked")
-                public Iterable<IndexableField> fields(Object value) {
-                    return domainOperations.createDocument((T) value);
-                }
+        public ZonedDateTimeFieldDescriptorBuilder facet() {
+            this.subFieldFactories.add(fieldName -> SubFieldDescriptors
+                    .numericFacet(fieldName)
+                    .compose(this::valueToMillis)
+            );
+            return this;
+        }
 
-                @Override
-                public Object read(Document document) {
-                    return domainOperations.readDocument(document);
-                }
+        public ZonedDateTimeFieldDescriptorBuilder point() {
+            this.subFieldFactories.add(fieldName -> SubFieldDescriptors
+                    .longPoint(fieldName)
+                    .compose(this::valueToMillis)
+            );
+            return this;
+        }
 
-                @Override
-                public Iterator<SubFieldDescriptor<T>> iterator() {
-                    return Collections.emptyIterator();
-                }
-            };
+        @Override
+        public FieldParser<ZonedDateTime> fieldParser() {
+            return field -> this.millisToValue(field.numericValue().longValue());
+        }
+
+        @Override
+        protected FieldReader fieldReader() {
+            return new SingleValueFieldReader("%s.point".formatted(name), fieldParser());
+        }
+
+        private long valueToMillis(ZonedDateTime zonedDateTime) {
+            return zonedDateTime.toInstant().toEpochMilli();
+        }
+
+        private ZonedDateTime millisToValue(long millis) {
+            return ZonedDateTime.ofInstant(Instant.ofEpochMilli(millis), clock.getZone());
+        }
+
+        private String valueToString(ZonedDateTime zonedDateTime) {
+            return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(zonedDateTime);
         }
     }
 
@@ -233,15 +259,11 @@ public class FieldDescriptorBuilder {
                     .map(factory -> factory.createField(name))
                     .toList();
 
-            FieldReader fieldReader = multiValue
-                    ? new MultiValueFieldReader(name, fieldParser())
-                    : new SingleValueFieldReader(name, fieldParser());
-
             return new FieldDescriptorRecord<>(name,
                     id,
                     type.isAssignableFrom(String.class),
                     multiValue,
-                    fieldReader,
+                    fieldReader(),
                     subFields
             );
         }
@@ -250,6 +272,12 @@ public class FieldDescriptorBuilder {
          * Function via which the domain value can be derived from an {@link IndexableField}
          */
         abstract FieldParser<T> fieldParser();
+
+        protected FieldReader fieldReader() {
+            return multiValue
+                    ? new MultiValueFieldReader(name, fieldParser())
+                    : new SingleValueFieldReader(name, fieldParser());
+        }
     }
 
     private interface LazySubField<T> {

@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
@@ -138,11 +139,41 @@ class FieldDescriptorBuilderTest {
                 .map(factory -> factory.field(999L))
                 .toList();
 
-        assertIndexableFields(List.of(LongPoint.class, StoredField.class), result);
+        assertIndexableFields(List.of(LongPoint.class, NumericDocValuesField.class, StoredField.class), result);
 
         field.forEach(factory -> logger.info("buildLongField: {}", factory.field(999L)));
     }
 
+    @Test
+    void buildZonedDateTimeField() {
+        var field = new FieldDescriptorBuilder()
+                .zonedDateTime()
+                .point()
+                .facet()
+                .name("foo")
+                .build();
+
+
+        Assertions.assertEquals(3, StreamSupport.stream(field.spliterator(), false).count());
+        assertFieldDescriptors(List.of("foo.point", "foo.value", "foo"), field.subfields());
+
+        var now = ZonedDateTime.now();
+        var result = StreamSupport.stream(field.spliterator(), false)
+                .map(factory -> factory.field(now))
+                .toList();
+
+        assertIndexableFields(List.of(LongPoint.class, NumericDocValuesField.class, StoredField.class), result);
+
+        Document document = new Document();
+        field.forEach(factory -> document.add(factory.field(now)));
+
+        var value = field.read(document);
+        logger.info("Read value: {}", value);
+        org.assertj.core.api.Assertions.assertThat(((ZonedDateTime)value).toInstant().toEpochMilli())
+                .isEqualTo(now.toInstant().toEpochMilli());
+
+        field.forEach(factory -> logger.info("buildZonedDateTimeField: {}", factory.field(now)));
+    }
 
 
     private <T> void assertFieldDescriptors(List<String> expected, Iterable<SubFieldDescriptor<T>> subFieldDescriptors) {
