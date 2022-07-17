@@ -72,8 +72,19 @@ public class FieldDescriptorBuilder {
         return new LongFieldDescriptorBuilder();
     }
 
+    /**
+     * Builder for {@link ZonedDateTime} using the system default clock
+     */
     public ZonedDateTimeFieldDescriptorBuilder zonedDateTime() {
         return new ZonedDateTimeFieldDescriptorBuilder();
+    }
+
+    /**
+     * Builder for {@link ZonedDateTime} using the specified clock to derive timezone information
+     * @param clock the Clock instance
+     */
+    public ZonedDateTimeFieldDescriptorBuilder zonedDateTime(Clock clock) {
+        return new ZonedDateTimeFieldDescriptorBuilder(clock);
     }
 
     /**
@@ -178,21 +189,37 @@ public class FieldDescriptorBuilder {
         }
     }
 
+    /**
+     * Builder for {@link ZonedDateTime} fields
+     */
     public class ZonedDateTimeFieldDescriptorBuilder extends TypedFieldDescriptorBuilder<ZonedDateTime> {
 
         private final Clock clock;
 
+        /**
+         * Builder using the system default timezone
+         */
         public ZonedDateTimeFieldDescriptorBuilder() {
             this(Clock.systemDefaultZone());
         }
 
+        /**
+         * Builder deriving timezone information from the specified {@link Clock}
+         * @param clock clock to derive timezone information
+         */
         public ZonedDateTimeFieldDescriptorBuilder(Clock clock) {
             super(ZonedDateTime.class);
             this.clock = clock;
-            if(!exclude) subFieldFactories.add(fieldName -> SubFieldDescriptors
-                    .storedString(fieldName)
-                    .compose(this::valueToString)
-            );
+            if(!exclude) {
+                subFieldFactories.add(fieldName -> SubFieldDescriptors
+                        .storedString(fieldName)
+                        .compose(this::valueToString)
+                );
+                subFieldFactories.add(fieldName -> SubFieldDescriptors
+                        .storedLong("%s.millis".formatted(fieldName))
+                        .compose(this::valueToMillis)
+                );
+            }
         }
 
         public ZonedDateTimeFieldDescriptorBuilder facet() {
@@ -218,7 +245,7 @@ public class FieldDescriptorBuilder {
 
         @Override
         protected FieldReader fieldReader() {
-            return new SingleValueFieldReader("%s.point".formatted(name), fieldParser());
+            return new SingleValueFieldReader("%s.millis".formatted(name), fieldParser());
         }
 
         private long valueToMillis(ZonedDateTime zonedDateTime) {
