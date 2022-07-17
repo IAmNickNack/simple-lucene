@@ -193,3 +193,7 @@ public class LuceneDomainOperations implements DomainOperations<ShortCountry> {
     // implementations as above
 }
 ```
+
+<hr>
+
+Next: [Insert and Update](03_UPDATING.md)
