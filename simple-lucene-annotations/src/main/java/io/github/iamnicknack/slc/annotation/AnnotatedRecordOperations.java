@@ -11,13 +11,25 @@ import io.github.iamnicknack.slc.api.index.DomainOperations;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Factory for {@link DomainOperations} derived from {@link IndexProperty} annotations
+ * @param <T> the introspected type
+ */
 public interface AnnotatedRecordOperations<T extends Record> extends DomainOperations<T> {
 
 
+    /**
+     * Create {@link DomainOperations} derived from {@link IndexProperty} annotations
+     * @param type the annotated type
+     * @param backend the index configuration which may be updated according to any required facets
+     * @return a {@link DomainOperations} instance
+     * @param <T> the annotated type
+     */
     static <T extends Record> AnnotatedRecordOperations<T> create(Class<T> type, LuceneBackend backend) {
 
         record AccessorDescriptor<T>(Method accessor, FieldDescriptor<T> fieldDescriptor) {}
@@ -61,9 +73,7 @@ public interface AnnotatedRecordOperations<T extends Record> extends DomainOpera
             @Override
             public Object[] apply(Document document) {
                 return accessors.stream()
-                        .map(accessorDescriptor -> accessorDescriptor.fieldDescriptor()
-                                .read(document.getFields(accessorDescriptor.fieldDescriptor().name()))
-                        )
+                        .map(accessorDescriptor -> accessorDescriptor.fieldDescriptor().read(document))
                         .toArray();
             }
         };
@@ -200,13 +210,28 @@ public interface AnnotatedRecordOperations<T extends Record> extends DomainOpera
             return longBuilder.build();
         };
 
+        PropertyDescriptorFactory zonedDateTimeFactory = annotation -> {
+            var builder = new FieldDescriptorBuilder()
+                    .name(annotation.value());
+
+            if(annotation.exclude()) builder.exclude();
+
+            var zonedDateTimeBuilder = builder.zonedDateTime();
+
+            if(annotation.point()) zonedDateTimeBuilder.point();
+            if(annotation.facet()) zonedDateTimeBuilder.facet();
+
+            return zonedDateTimeBuilder.build();
+        };
+
         Map<Class<?>, PropertyDescriptorFactory> lookup = Map.of(
                 String.class, stringFactory,
                 Integer.class, integerFactory,
                 int.class, integerFactory,
                 Long.class, longFactory,
                 long.class, longFactory,
-                List.class, listFactory
+                List.class, listFactory,
+                ZonedDateTime.class, zonedDateTimeFactory
         );
     }
 }

@@ -1,11 +1,16 @@
 package io.github.iamnicknack.slc.core.document;
 
 import io.github.iamnicknack.slc.api.document.FieldDescriptor;
-import io.github.iamnicknack.slc.api.document.SubFieldDescriptor;
-import org.apache.lucene.index.IndexableField;
 import io.github.iamnicknack.slc.api.document.FieldParser;
 import io.github.iamnicknack.slc.api.document.FieldReader;
+import io.github.iamnicknack.slc.api.document.SubFieldDescriptor;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexableField;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -65,6 +70,21 @@ public class FieldDescriptorBuilder {
 
     public LongFieldDescriptorBuilder longField() {
         return new LongFieldDescriptorBuilder();
+    }
+
+    /**
+     * Builder for {@link ZonedDateTime} using the system default clock
+     */
+    public ZonedDateTimeFieldDescriptorBuilder zonedDateTime() {
+        return new ZonedDateTimeFieldDescriptorBuilder();
+    }
+
+    /**
+     * Builder for {@link ZonedDateTime} using the specified clock to derive timezone information
+     * @param clock the Clock instance
+     */
+    public ZonedDateTimeFieldDescriptorBuilder zonedDateTime(Clock clock) {
+        return new ZonedDateTimeFieldDescriptorBuilder(clock);
     }
 
     /**
@@ -170,6 +190,78 @@ public class FieldDescriptorBuilder {
     }
 
     /**
+     * Builder for {@link ZonedDateTime} fields
+     */
+    public class ZonedDateTimeFieldDescriptorBuilder extends TypedFieldDescriptorBuilder<ZonedDateTime> {
+
+        private final Clock clock;
+
+        /**
+         * Builder using the system default timezone
+         */
+        public ZonedDateTimeFieldDescriptorBuilder() {
+            this(Clock.systemDefaultZone());
+        }
+
+        /**
+         * Builder deriving timezone information from the specified {@link Clock}
+         * @param clock clock to derive timezone information
+         */
+        public ZonedDateTimeFieldDescriptorBuilder(Clock clock) {
+            super(ZonedDateTime.class);
+            this.clock = clock;
+            if(!exclude) {
+                subFieldFactories.add(fieldName -> SubFieldDescriptors
+                        .storedString(fieldName)
+                        .compose(this::valueToString)
+                );
+                subFieldFactories.add(fieldName -> SubFieldDescriptors
+                        .storedLong("%s.millis".formatted(fieldName))
+                        .compose(this::valueToMillis)
+                );
+            }
+        }
+
+        public ZonedDateTimeFieldDescriptorBuilder facet() {
+            this.subFieldFactories.add(fieldName -> SubFieldDescriptors
+                    .numericFacet(fieldName)
+                    .compose(this::valueToMillis)
+            );
+            return this;
+        }
+
+        public ZonedDateTimeFieldDescriptorBuilder point() {
+            this.subFieldFactories.add(fieldName -> SubFieldDescriptors
+                    .longPoint(fieldName)
+                    .compose(this::valueToMillis)
+            );
+            return this;
+        }
+
+        @Override
+        public FieldParser<ZonedDateTime> fieldParser() {
+            return field -> this.millisToValue(field.numericValue().longValue());
+        }
+
+        @Override
+        protected FieldReader fieldReader() {
+            return new SingleValueFieldReader("%s.millis".formatted(name), fieldParser());
+        }
+
+        private long valueToMillis(ZonedDateTime zonedDateTime) {
+            return zonedDateTime.toInstant().toEpochMilli();
+        }
+
+        private ZonedDateTime millisToValue(long millis) {
+            return ZonedDateTime.ofInstant(Instant.ofEpochMilli(millis), clock.getZone());
+        }
+
+        private String valueToString(ZonedDateTime zonedDateTime) {
+            return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(zonedDateTime);
+        }
+    }
+
+    /**
      * Base class for type-specific builders
      */
     public abstract class TypedFieldDescriptorBuilder<T> {
@@ -194,15 +286,11 @@ public class FieldDescriptorBuilder {
                     .map(factory -> factory.createField(name))
                     .toList();
 
-            FieldReader fieldReader = multiValue
-                    ? new MultiValueFieldReader(fieldParser())
-                    : new SingleValueFieldReader(fieldParser());
-
             return new FieldDescriptorRecord<>(name,
                     id,
                     type.isAssignableFrom(String.class),
                     multiValue,
-                    fieldReader,
+                    fieldReader(),
                     subFields
             );
         }
@@ -211,6 +299,12 @@ public class FieldDescriptorBuilder {
          * Function via which the domain value can be derived from an {@link IndexableField}
          */
         abstract FieldParser<T> fieldParser();
+
+        protected FieldReader fieldReader() {
+            return multiValue
+                    ? new MultiValueFieldReader(name, fieldParser())
+                    : new SingleValueFieldReader(name, fieldParser());
+        }
     }
 
     private interface LazySubField<T> {
@@ -223,8 +317,6 @@ public class FieldDescriptorBuilder {
                                             boolean multiValue,
                                             FieldReader fieldReader,
                                             List<SubFieldDescriptor<T>> subfields) implements FieldDescriptor<T> {
-
-
 
         @Override
         @SuppressWarnings("unchecked")
@@ -252,8 +344,8 @@ public class FieldDescriptorBuilder {
 
         @Override
         @SuppressWarnings("unchecked")
-        public T read(IndexableField[] fields) {
-            return (T)fieldReader.read(fields);
+        public T read(Document document) {
+            return (T)fieldReader.read(document);
         }
     }
 }

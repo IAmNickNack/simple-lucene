@@ -7,6 +7,8 @@
 .idea/
 *.iml
 *.iws
+out/
+
 
 # Mac
 .DS_Store
@@ -14,6 +16,10 @@
 # Maven
 log/
 target/
+
+# Gradle
+build/
+.gradle/
 
 # Application
 test-indices/

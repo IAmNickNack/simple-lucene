@@ -5,6 +5,7 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.TermQuery;
 import org.mockito.ArgumentMatcher;
 
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,10 @@ import java.util.Map;
 public class TestData {
 
     private TestData() {}
+
+    public static Map<String, Object> createValue(String value, int sequence, String description, List<String> others, ZonedDateTime timestamp) {
+        return Map.of("value", value, "sequence", sequence, "description", description, "others", others, "timestamp", timestamp);
+    }
 
     public static Map<String, Object> createValue(String value, int sequence, String description, List<String> others) {
         return Map.of("value", value, "sequence", sequence, "description", description, "others", others);
