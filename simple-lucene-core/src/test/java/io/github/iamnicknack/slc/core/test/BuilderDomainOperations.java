@@ -42,6 +42,12 @@ public class BuilderDomainOperations {
                         .facet()
                         .build()
                 )
+                .field(new FieldDescriptorBuilder()
+                        .name("timestamp")
+                        .zonedDateTime()
+                        .point()
+                        .build()
+                )
                 .build();
 
         return new MapDomainOperations(documentDescriptor);
