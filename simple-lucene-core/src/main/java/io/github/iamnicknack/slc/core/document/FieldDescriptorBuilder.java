@@ -87,6 +87,10 @@ public class FieldDescriptorBuilder {
         return new ZonedDateTimeFieldDescriptorBuilder(clock);
     }
 
+    public InstantFieldDescriptorBuilder instant() {
+        return new InstantFieldDescriptorBuilder();
+    }
+
     /**
      * String-specific features
      */
@@ -190,7 +194,50 @@ public class FieldDescriptorBuilder {
     }
 
     /**
-     * Builder for {@link ZonedDateTime} fields
+     * Builder for {@link Instant} fields.
+     *
+     * <p>Lucene does not natively support {@link java.math.BigDecimal} so timestamps are stored only
+     * with millisecond precision. Nano precision will be lost</p>
+     */
+    public class InstantFieldDescriptorBuilder extends TypedFieldDescriptorBuilder<Instant> {
+
+        public InstantFieldDescriptorBuilder() {
+            super(Instant.class);
+            if(!exclude) {
+                subFieldFactories.add(fieldName -> SubFieldDescriptors
+                        .storedLong(fieldName)
+                        .compose(Instant::toEpochMilli)
+                );
+            }
+        }
+
+        public InstantFieldDescriptorBuilder facet() {
+            this.subFieldFactories.add(fieldName -> SubFieldDescriptors
+                    .numericFacet(fieldName)
+                    .compose(Instant::toEpochMilli)
+            );
+            return this;
+        }
+
+        public InstantFieldDescriptorBuilder point() {
+            this.subFieldFactories.add(fieldName -> SubFieldDescriptors
+                    .longPoint(fieldName)
+                    .compose(Instant::toEpochMilli)
+            );
+            return this;
+        }
+
+        @Override
+        public FieldParser<Instant> fieldParser() {
+            return field -> Instant.ofEpochMilli(field.numericValue().longValue());
+        }
+    }
+
+    /**
+     * Builder for {@link ZonedDateTime} fields.
+     *
+     * <p>Lucene does not natively support {@link java.math.BigDecimal} so timestamps are stored only
+     * with millisecond precision. Nano precision will be lost</p>
      */
     public class ZonedDateTimeFieldDescriptorBuilder extends TypedFieldDescriptorBuilder<ZonedDateTime> {
 

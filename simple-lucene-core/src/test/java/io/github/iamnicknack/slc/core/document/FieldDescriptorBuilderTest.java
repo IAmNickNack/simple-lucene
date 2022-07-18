@@ -17,10 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.StreamSupport;
@@ -206,6 +203,8 @@ class FieldDescriptorBuilderTest {
         var updateOperations = new BucketUpdateOperations<>(domainOperations);
 
         // value to test
+        // we store timestamps with millisecond precision so cannot compare nanos
+        // to keep the test simple, this comparison is only made with second precision
         var inputDateTime = LocalDateTime.now().atZone(ZoneOffset.UTC).withNano(0);
         // document to test
         var inputValue = Map.<String, Object>of("timestamp", inputDateTime);
@@ -221,6 +220,43 @@ class FieldDescriptorBuilderTest {
             var outputValue = it.next().value();
             assertTrue(outputValue.containsKey("timestamp"));
             assertEquals(inputDateTime, outputValue.get("timestamp"));
+        }
+    }
+
+    @Test
+    void instantIsReadable() throws IOException {
+        var backend = LuceneBackends.memory();
+        var documentBuilder = new DocumentDescriptorBuilder(backend)
+                .field(new FieldDescriptorBuilder()
+                        .instant()
+                        .point()
+                        .facet()
+                        .name("timestamp")
+                        .build()
+                )
+                .build();
+        var domainOperations = new MapDomainOperations(documentBuilder);
+        var updateOperations = new BucketUpdateOperations<>(domainOperations);
+
+        // value to test
+        var inputInstant = Instant.now();
+
+        // document to test
+        var inputValue = Map.<String, Object>of("timestamp", inputInstant);
+        backend.update(updateOperations.add(inputValue));
+
+        var queryExecutor = new DefaultQueryExecutor<>(QueryFactories.lucene(), backend.searcherLeaseFactory())
+                .withIterator(Result.IteratorFactory.mapping(domainOperations::readDocument));
+
+        // assertions
+        try(var result = queryExecutor.execute(new MatchAllDocsQuery())) {
+            var it = result.iterator();
+            assertTrue(it.hasNext());
+            var outputValue = it.next().value();
+            assertTrue(outputValue.containsKey("timestamp"));
+            // we store timestamps with millisecond precision so cannot compare nanos
+            // to keep the test simple, this comparison is only made with second precision
+            assertEquals(inputInstant.toEpochMilli(), ((Instant) outputValue.get("timestamp")).toEpochMilli());
         }
     }
 
