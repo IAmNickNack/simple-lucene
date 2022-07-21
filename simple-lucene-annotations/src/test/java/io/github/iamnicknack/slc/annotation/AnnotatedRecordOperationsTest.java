@@ -10,6 +10,8 @@ import io.github.iamnicknack.slc.api.backend.LuceneBackend;
 import io.github.iamnicknack.slc.core.backend.LuceneBackends;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -120,8 +122,39 @@ class AnnotatedRecordOperationsTest {
             assertEquals(testRecord, readRecord);
         }
 
-
         public record LongRecord(@IndexProperty("long-field") long longValue) {
+        }
+
+        @Test
+        void zonedDateTimeField() {
+            var config = AnnotatedRecordOperations.create(ZonedDateTimeRecord.class, backend);
+            assertNotNull(config);
+
+            var testRecord = new ZonedDateTimeRecord(ZonedDateTime.now());
+            var testDocument = config.createDocument(testRecord);
+            assertNotNull(testDocument);
+
+            var readRecord = config.readDocument(testDocument);
+            assertEquals(testRecord.timestamp.toInstant().toEpochMilli(), readRecord.timestamp.toInstant().toEpochMilli());
+        }
+
+        public record ZonedDateTimeRecord(@IndexProperty("timestamp-field") ZonedDateTime timestamp) {
+        }
+
+        @Test
+        void instantField() {
+            var config = AnnotatedRecordOperations.create(InstantRecord.class, backend);
+            assertNotNull(config);
+
+            var testRecord = new InstantRecord(Instant.now());
+            var testDocument = config.createDocument(testRecord);
+            assertNotNull(testDocument);
+
+            var readRecord = config.readDocument(testDocument);
+            assertEquals(testRecord.timestamp.toEpochMilli(), readRecord.timestamp.toEpochMilli());
+        }
+
+        public record InstantRecord(@IndexProperty("timestamp-field") Instant timestamp) {
         }
 
         @Test

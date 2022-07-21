@@ -11,6 +11,8 @@ import io.github.iamnicknack.slc.api.index.DomainOperations;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -72,9 +74,7 @@ public interface AnnotatedRecordOperations<T extends Record> extends DomainOpera
             @Override
             public Object[] apply(Document document) {
                 return accessors.stream()
-                        .map(accessorDescriptor -> accessorDescriptor.fieldDescriptor()
-                                .read(document.getFields(accessorDescriptor.fieldDescriptor().name()))
-                        )
+                        .map(accessorDescriptor -> accessorDescriptor.fieldDescriptor().read(document))
                         .toArray();
             }
         };
@@ -211,13 +211,43 @@ public interface AnnotatedRecordOperations<T extends Record> extends DomainOpera
             return longBuilder.build();
         };
 
+        PropertyDescriptorFactory zonedDateTimeFactory = annotation -> {
+            var builder = new FieldDescriptorBuilder()
+                    .name(annotation.value());
+
+            if(annotation.exclude()) builder.exclude();
+
+            var zonedDateTimeBuilder = builder.zonedDateTime();
+
+            if(annotation.point()) zonedDateTimeBuilder.point();
+            if(annotation.facet()) zonedDateTimeBuilder.facet();
+
+            return zonedDateTimeBuilder.build();
+        };
+
+        PropertyDescriptorFactory instantFactory = annotation -> {
+            var builder = new FieldDescriptorBuilder()
+                    .name(annotation.value());
+
+            if(annotation.exclude()) builder.exclude();
+
+            var instantBuilder = builder.instant();
+
+            if(annotation.point()) instantBuilder.point();
+            if(annotation.facet()) instantBuilder.facet();
+
+            return instantBuilder.build();
+        };
+
         Map<Class<?>, PropertyDescriptorFactory> lookup = Map.of(
                 String.class, stringFactory,
                 Integer.class, integerFactory,
                 int.class, integerFactory,
                 Long.class, longFactory,
                 long.class, longFactory,
-                List.class, listFactory
+                List.class, listFactory,
+                ZonedDateTime.class, zonedDateTimeFactory,
+                Instant.class, instantFactory
         );
     }
 }

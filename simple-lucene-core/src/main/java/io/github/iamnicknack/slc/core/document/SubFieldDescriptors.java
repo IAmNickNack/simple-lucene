@@ -55,9 +55,9 @@ public class SubFieldDescriptors {
         return new SubFieldRecord<>(name, LongPoint.class, l -> new LongPoint(name, l));
     }
 
-    private record SubFieldRecord<T>(String name,
-                                     Class<? extends IndexableField> fieldType,
-                                     Function<T, ? extends IndexableField> function) implements SubFieldDescriptor<T> {
+    private record SubFieldRecord<T, V extends IndexableField>(String name,
+                                                               Class<V> fieldType,
+                                                               Function<T, V> function) implements SubFieldDescriptor<T> {
         @Override
         public IndexableField field(T value) {
             return function().apply(value);
