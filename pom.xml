@@ -8,6 +8,11 @@
     <artifactId>simple-lucene-parent</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+
+    <name>Simple Lucene</name>
+    <description>Simplifies integration of Lucene</description>
+    <url>https://iamnicknack.github.io/simple-lucene/</url>
+
     <modules>
         <module>simple-lucene-api</module>
         <module>simple-lucene-annotations</module>
@@ -25,8 +30,17 @@
         </license>
     </licenses>
 
+    <developers>
+        <developer>
+            <name>Nick Sharples</name>
+            <organizationUrl>https://github.com/iamnicknack</organizationUrl>
+        </developer>
+    </developers>
+
     <scm>
-        <url>https://github.com/IAmNickNack/simple-lucene.git</url>
+        <connection>scm:git:ssh://github.com:iamnicknack/simple-lucene.git</connection>
+        <developerConnection>scm:git:ssh://github.com:iamnicknack/simple-lucene.git</developerConnection>
+        <url>https://github.com/iamnicknack/simple-lucene</url>
     </scm>
 
     <properties>
@@ -44,8 +58,11 @@
 
         <maven-javadoc.version>3.4.0</maven-javadoc.version>
         <maven-sources.version>3.2.1</maven-sources.version>
+        <maven-gpg.version>3.0.1</maven-gpg.version>
+        <maven-checksum.version>1.11</maven-checksum.version>
         <surefire.version>3.0.0-M7</surefire.version>
         <jacoco.version>0.8.8</jacoco.version>
+        <nexus-staging.version>1.6.7</nexus-staging.version>
 
         <jacoco-branch-coverage>0.6</jacoco-branch-coverage>
         <jacoco-line-coverage>0.6</jacoco-line-coverage>
@@ -240,37 +257,107 @@
             </activation>
 
             <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-javadoc-plugin</artifactId>
+                            <version>${maven-javadoc.version}</version>
+                            <configuration>
+                                <nohelp>true</nohelp>
+                                <excludePackageNames>io.github.iamnicknack.slc.examples.*;io.github.iamnicknack.slc.aspect;slc.*;</excludePackageNames>
+                            </configuration>
+                            <executions>
+                                <execution>
+                                    <id>attach-javadoc</id>
+                                    <goals>
+                                        <goal>jar</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-source-plugin</artifactId>
+                            <version>${maven-sources.version}</version>
+                            <executions>
+                                <execution>
+                                    <id>attach-source</id>
+                                    <goals>
+                                        <goal>jar</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+
+                        <plugin>
+                            <groupId>net.nicoulaj.maven.plugins</groupId>
+                            <artifactId>checksum-maven-plugin</artifactId>
+                            <version>${maven-checksum.version}</version>
+                            <executions>
+                                <execution>
+                                    <goals>
+                                        <goal>artifacts</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-gpg-plugin</artifactId>
+                            <version>${maven-gpg.version}</version>
+                            <executions>
+                                <execution>
+                                    <id>sign-artifacts</id>
+                                    <phase>verify</phase>
+                                    <goals>
+                                        <goal>sign</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                            <configuration>
+                                <gpgArguments>
+                                    <arg>--pinentry-mode</arg>
+                                    <arg>loopback</arg>
+                                </gpgArguments>
+                            </configuration>
+                        </plugin>
+
+                        <plugin>
+                            <groupId>org.sonatype.plugins</groupId>
+                            <artifactId>nexus-staging-maven-plugin</artifactId>
+                            <version>${nexus-staging.version}</version>
+                            <extensions>true</extensions>
+                            <configuration>
+                                <serverId>ossrh</serverId>
+                                <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                                <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+                
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>${maven-javadoc.version}</version>
                     </plugin>
 
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
-                        <version>${maven-sources.version}</version>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>net.nicoulaj.maven.plugins</groupId>
+                        <artifactId>checksum-maven-plugin</artifactId>
                     </plugin>
 
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>${maven-gpg.version}</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <gpgArguments>
-                                <arg>--pinentry-mode</arg>
-                                <arg>loopback</arg>
-                            </gpgArguments>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
