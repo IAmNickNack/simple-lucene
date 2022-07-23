@@ -11,6 +11,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>simple-lucene-api</artifactId>
+    <name>Simple Lucene API</name>
+    <description>Specifies abstractions for simple-lucene</description>
+    <url>https://iamnicknack.github.io/simple-lucene/</url>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -18,5 +21,24 @@
         <jacoco-branch-coverage>1.0</jacoco-branch-coverage>
         <jacoco-line-coverage>0.9</jacoco-line-coverage>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>${nexus-staging.version}</version>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
