@@ -2,6 +2,14 @@
 
 [//]: # (![example workflow]&#40;https://github.com/iamnicknack/simple-lucene/actions/workflows/maven/badge.svg&#41;)
 
+```xml
+  <dependency>
+      <groupId>io.github.iamnicknack.simple-lucene</groupId>
+      <artifactId>simple-lucene-annotations</artifactId>
+      <version>0.1.1</version>
+  </dependency>
+```
+
 ## What this is
 
 * An opinionated, low-level abstraction of Lucene which aims to simplify resource management and query execution.
@@ -33,7 +41,7 @@ Re-writing features to support these types of scenarios each time an application
 waste of development time and resources. By accepting some opinionated choices around field names and types, we
 can negate the need to duplicate code each time we build an application with Lucene.
 
-## Documentation
+## Documentation and examples
 
 Documentation is provided along with working examples in the [examples/documentation](examples/documentation/README.md)
 module
