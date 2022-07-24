@@ -11,6 +11,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>simple-lucene-api</artifactId>
+    <name>Simple Lucene API</name>
+    <description>Specifies abstractions for simple-lucene</description>
+    <url>https://iamnicknack.github.io/simple-lucene/</url>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

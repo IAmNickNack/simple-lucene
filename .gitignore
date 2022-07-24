@@ -16,6 +16,7 @@ out/
 # Maven
 log/
 target/
+pom.xml.versionsBackup
 
 # Gradle
 build/

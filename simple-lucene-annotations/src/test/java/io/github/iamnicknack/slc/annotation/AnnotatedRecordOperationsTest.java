@@ -10,6 +10,7 @@ import io.github.iamnicknack.slc.api.backend.LuceneBackend;
 import io.github.iamnicknack.slc.core.backend.LuceneBackends;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -138,6 +139,22 @@ class AnnotatedRecordOperationsTest {
         }
 
         public record ZonedDateTimeRecord(@IndexProperty("timestamp-field") ZonedDateTime timestamp) {
+        }
+
+        @Test
+        void instantField() {
+            var config = AnnotatedRecordOperations.create(InstantRecord.class, backend);
+            assertNotNull(config);
+
+            var testRecord = new InstantRecord(Instant.now());
+            var testDocument = config.createDocument(testRecord);
+            assertNotNull(testDocument);
+
+            var readRecord = config.readDocument(testDocument);
+            assertEquals(testRecord.timestamp.toEpochMilli(), readRecord.timestamp.toEpochMilli());
+        }
+
+        public record InstantRecord(@IndexProperty("timestamp-field") Instant timestamp) {
         }
 
         @Test
