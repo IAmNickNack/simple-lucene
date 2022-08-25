@@ -52,3 +52,6 @@ The default implementation makes use of Lucene [ReferenceManager](https://lucene
 types. The API wraps interactions with the reference manager's `acquire()`, `release()` and `maybeRefresh()` in 
 [AutoCloseable](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/AutoCloseable.html) leases.
 
+<hr>
+
+Next: [Domain Operations](02_DOMAIN_OPERATIONS.md)
