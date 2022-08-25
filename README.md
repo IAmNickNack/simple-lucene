@@ -6,7 +6,7 @@
   <dependency>
       <groupId>io.github.iamnicknack.simple-lucene</groupId>
       <artifactId>simple-lucene-annotations</artifactId>
-      <version>0.1.1</version>
+      <version>0.1.3</version>
   </dependency>
 ```
 
