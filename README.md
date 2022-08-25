@@ -6,9 +6,10 @@
   <dependency>
       <groupId>io.github.iamnicknack.simple-lucene</groupId>
       <artifactId>simple-lucene-annotations</artifactId>
-      <version>0.1.1</version>
+      <version>0.1.3</version>
   </dependency>
 ```
+Up to date dependency details are available from [https://mvnrepository.com/artifact/io.github.iamnicknack.simple-lucene](https://mvnrepository.com/artifact/io.github.iamnicknack.simple-lucene) 
 
 ## What this is
 
