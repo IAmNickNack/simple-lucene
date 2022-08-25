@@ -7,7 +7,7 @@
     <groupId>io.github.iamnicknack.simple-lucene</groupId>
     <artifactId>simple-lucene-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1.3</version>
 
     <name>Simple Lucene</name>
     <description>Simplifies integration of Lucene</description>

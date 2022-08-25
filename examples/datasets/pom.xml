@@ -5,7 +5,7 @@
     <parent>
         <artifactId>examples</artifactId>
         <groupId>com.github.iamnicknack.simple-lucene.examples</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.1.3</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -28,7 +28,7 @@
         <dependency>
             <groupId>io.github.iamnicknack.simple-lucene</groupId>
             <artifactId>simple-lucene-annotations</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>0.1.3</version>
         </dependency>
     </dependencies>
 
