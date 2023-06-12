@@ -63,7 +63,7 @@
         <assertj.version>3.24.2</assertj.version>
         <slf4j.version>2.0.6</slf4j.version>
         <logback.version>1.4.5</logback.version>
-        <maven-javadoc.version>3.4.1</maven-javadoc.version>
+        <maven-javadoc.version>3.5.0</maven-javadoc.version>
         <maven-sources.version>3.2.1</maven-sources.version>
         <maven-gpg.version>3.0.1</maven-gpg.version>
         <maven-checksum.version>1.11</maven-checksum.version>
