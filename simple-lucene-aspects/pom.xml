@@ -16,7 +16,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <jacoco-branch-coverage>0</jacoco-branch-coverage>
         <jacoco-line-coverage>0</jacoco-line-coverage>
-        <aspectj.version>1.9.9.1</aspectj.version>
+        <aspectj.version>1.9.19</aspectj.version>
     </properties>
 
     <dependencies>
