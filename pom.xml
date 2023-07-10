@@ -67,7 +67,7 @@
         <maven-sources.version>3.2.1</maven-sources.version>
         <maven-gpg.version>3.0.1</maven-gpg.version>
         <maven-checksum.version>1.11</maven-checksum.version>
-        <surefire.version>3.0.0</surefire.version>
+        <surefire.version>3.1.2</surefire.version>
         <jacoco.version>0.8.10</jacoco.version>
         <nexus-staging.version>1.6.13</nexus-staging.version>
 
