@@ -64,7 +64,7 @@
         <slf4j.version>2.0.7</slf4j.version>
         <logback.version>1.4.8</logback.version>
         <maven-javadoc.version>3.5.0</maven-javadoc.version>
-        <maven-sources.version>3.2.1</maven-sources.version>
+        <maven-sources.version>3.3.0</maven-sources.version>
         <maven-gpg.version>3.0.1</maven-gpg.version>
         <maven-checksum.version>1.11</maven-checksum.version>
         <surefire.version>3.0.0</surefire.version>
