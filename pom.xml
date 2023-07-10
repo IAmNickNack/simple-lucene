@@ -56,7 +56,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <lucene.version>9.6.0</lucene.version>
+        <lucene.version>9.7.0</lucene.version>
         <jackson.version>2.15.2</jackson.version>
         <junit.version>5.9.3</junit.version>
         <mockito.version>5.4.0</mockito.version>
