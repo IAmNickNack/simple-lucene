@@ -1,8 +1,5 @@
 package slc.domain;
 
-import io.github.iamnicknack.slc.api.backend.LuceneBackend;
-import io.github.iamnicknack.slc.api.index.DomainOperations;
-import io.github.iamnicknack.slc.api.index.UpdateOperations;
 import io.github.iamnicknack.slc.api.query.QueryFactory;
 import io.github.iamnicknack.slc.api.query.QueryOptions;
 import io.github.iamnicknack.slc.api.query.Result;
@@ -10,8 +7,6 @@ import io.github.iamnicknack.slc.core.query.DefaultPagedQueryExecutor;
 import io.github.iamnicknack.slc.core.query.DefaultQueryExecutor;
 import io.github.iamnicknack.slc.core.query.QueryException;
 import io.github.iamnicknack.slc.core.query.QueryFactories;
-import name.falgout.jeffrey.testing.junit.guice.GuiceExtension;
-import name.falgout.jeffrey.testing.junit.guice.IncludeModule;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -21,42 +16,34 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import slc.domain.modules.BackendModule;
-import slc.domain.modules.DataModule;
-import slc.domain.modules.QueriesModule;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(GuiceExtension.class)
-@IncludeModule({BackendModule.class, DataModule.class, QueriesModule.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class QueryExampleTest {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final TestComponent components = DaggerTestComponent.create();
 
     @BeforeAll
-    void beforeAll(LuceneBackend backend,
-                   UpdateOperations<ShortCountry> updateOperations,
-                   List<ShortCountry> countries) {
-        backend.update(updateOperations.addAll(countries));
+    void beforeAll() {
+        components.load();
     }
 
     @AfterAll
-    void afterAll(BackendModule.ShutdownHook shutdownHook) throws IOException {
-        shutdownHook.shutDown();
+    void afterAll() throws IOException {
+        components.shutdownHook().shutDown();
     }
 
     @Test
-    void textSearch(LuceneBackend backend) {
+    void textSearch() {
         QueryParser parser = new QueryParser("_all", new StandardAnalyzer());
         QueryFactory<String> queryByName = value -> {
             try {
@@ -66,7 +53,7 @@ public class QueryExampleTest {
             }
         };
 
-        var queryExecutor = new DefaultQueryExecutor<>(queryByName, backend.searcherLeaseFactory());
+        var queryExecutor = new DefaultQueryExecutor<>(queryByName, components.luceneBackend().searcherLeaseFactory());
 
         logger.info("Searching for \"Spain\"");
         try(var result = queryExecutor.execute("Spain")) {
@@ -82,12 +69,11 @@ public class QueryExampleTest {
     }
 
     @Test
-    void keywordSearch(LuceneBackend backend,
-                       DomainOperations<ShortCountry> domainOperations) {
+    void keywordSearch() {
         QueryFactory<String> queryByIsoCode = value -> new TermQuery(new Term("iso.keyword", value));
 
-        var queryExecutor = new DefaultQueryExecutor<>(queryByIsoCode, backend.searcherLeaseFactory())
-                .withIterator(Result.IteratorFactory.mapping(domainOperations::readDocument));
+        var queryExecutor = new DefaultQueryExecutor<>(queryByIsoCode, components.luceneBackend().searcherLeaseFactory())
+                .withIterator(Result.IteratorFactory.mapping(components.domainOperations()::readDocument));
 
         try(var result = queryExecutor.execute("ESP")) {
             result.forEach(hit -> logger.info("[{}] Country: {}", hit.score(), hit.value()));
@@ -96,7 +82,7 @@ public class QueryExampleTest {
     }
 
     @Test
-    void pagingResults(LuceneBackend backend) {
+    void pagingResults() {
         var queryByRegion = QueryFactories.text("region.text");
         var queryOptions = QueryOptions.DEFAULT;
 
@@ -104,7 +90,7 @@ public class QueryExampleTest {
         We can't know beforehand how many documents might be identified. This could be 10's, 100's, 1000's, etc, etc.
         For this reason, Lucene and therefore also the default executor return only a pre-defined maximum number of documents.
          */
-        var queryExecutor = new DefaultQueryExecutor<>(queryByRegion, backend.searcherLeaseFactory());
+        var queryExecutor = new DefaultQueryExecutor<>(queryByRegion, components.luceneBackend().searcherLeaseFactory());
         try(var stream = queryExecutor.execute("americas", queryOptions).stream()) {
             var defaultCount = stream.count();
             logger.info("Default executor found {} hits", defaultCount);
@@ -114,7 +100,7 @@ public class QueryExampleTest {
         /*
         Firstly, paged query execution allows all the identified results to be returned
          */
-        var pagedQueryExecutor = new DefaultPagedQueryExecutor<>(queryByRegion, backend.searcherLeaseFactory());
+        var pagedQueryExecutor = new DefaultPagedQueryExecutor<>(queryByRegion, components.luceneBackend().searcherLeaseFactory());
         try(var stream = pagedQueryExecutor.execute("americas").stream()) {
             var pagedCount = stream.count();
             logger.info("Paged executor found {} hits", pagedCount);
@@ -134,9 +120,9 @@ public class QueryExampleTest {
 
 
     @Test
-    void pagedExecution(LuceneBackend backend) {
+    void pagedExecution() {
         var queryByRegion = QueryFactories.text("region.text");
-        var queryExecutor = new DefaultPagedQueryExecutor<>(queryByRegion, backend.searcherLeaseFactory());
+        var queryExecutor = new DefaultPagedQueryExecutor<>(queryByRegion, components.luceneBackend().searcherLeaseFactory());
 
         var pageIndex = new AtomicInteger();
         var totalHits = new AtomicLong();
@@ -155,8 +141,8 @@ public class QueryExampleTest {
     }
 
     @Test
-    void lookupFunction(@QueriesModule.ISO CountryLookup countryLookup) {
-        var countryOptional = countryLookup.lookup("CAN");
+    void lookupFunction() {
+        var countryOptional = components.countryLookup().lookup("CAN");
         countryOptional.ifPresent(country -> logger.info("Found country: {}", country));
 
         assertThat(countryOptional).isPresent();
@@ -164,8 +150,8 @@ public class QueryExampleTest {
     }
 
     @Test
-    void searchFunction(@QueriesModule.SearchAll CountrySearch countrySearch) {
-        var countries = countrySearch.search("europe");
+    void searchFunction() {
+        var countries = components.countrySearch().search("europe");
         countries.forEach(country -> logger.info("Found country: {}", country));
 
         assertThat(countries.size()).isGreaterThan(10);

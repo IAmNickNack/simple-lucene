@@ -1,8 +1,7 @@
 package slc.domain.modules;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
+import dagger.Module;
+import dagger.Provides;
 import io.github.iamnicknack.slc.api.backend.LuceneBackend;
 import io.github.iamnicknack.slc.api.index.DomainOperations;
 import io.github.iamnicknack.slc.api.query.QueryExecutor;
@@ -11,6 +10,7 @@ import io.github.iamnicknack.slc.api.query.Result;
 import io.github.iamnicknack.slc.core.query.DefaultPagedQueryExecutor;
 import io.github.iamnicknack.slc.core.query.DefaultQueryExecutor;
 import io.github.iamnicknack.slc.core.query.QueryFactories;
+import jakarta.inject.Singleton;
 import slc.domain.CountryLookup;
 import slc.domain.CountrySearch;
 import slc.domain.ShortCountry;
@@ -20,7 +20,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Optional;
 
-public class QueriesModule extends AbstractModule {
+@Module
+public class QueriesModule {
 
     @Singleton
     @Provides

@@ -1,8 +1,7 @@
 package slc.domain.modules;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
+import dagger.Module;
+import dagger.Provides;
 import io.github.iamnicknack.slc.annotation.AnnotatedRecordOperations;
 import io.github.iamnicknack.slc.api.backend.LuceneBackend;
 import io.github.iamnicknack.slc.api.index.DomainOperations;
@@ -10,16 +9,19 @@ import io.github.iamnicknack.slc.api.index.UpdateOperations;
 import io.github.iamnicknack.slc.core.backend.LuceneBackends;
 import io.github.iamnicknack.slc.core.collection.LuceneCollection;
 import io.github.iamnicknack.slc.core.index.CollectionLikeUpdateOperations;
+import jakarta.inject.Singleton;
 import slc.domain.ShortCountry;
 
 import java.io.IOException;
 
-public class BackendModule extends AbstractModule {
+@Module
+public class BackendModule {
 
-    @Override
-    protected void configure() {
+    @Singleton
+    @Provides
+    public LuceneBackend luceneBackend() {
         try {
-            bind(LuceneBackend.class).toInstance(LuceneBackends.memory());
+            return LuceneBackends.memory();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

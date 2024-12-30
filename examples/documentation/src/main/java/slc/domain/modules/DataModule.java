@@ -1,15 +1,16 @@
 package slc.domain.modules;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
+import dagger.Module;
+import dagger.Provides;
 import io.github.iamnicknack.slc.examples.data.country.CountryData;
 import io.github.iamnicknack.slc.examples.data.country.Place;
+import jakarta.inject.Singleton;
 import slc.domain.ShortCountry;
 
 import java.util.List;
 
-public class DataModule extends AbstractModule {
+@Module
+public class DataModule {
 
     @Singleton
     @Provides
