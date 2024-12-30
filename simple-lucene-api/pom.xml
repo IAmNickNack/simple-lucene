@@ -16,8 +16,8 @@
     <url>https://iamnicknack.github.io/simple-lucene/</url>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <jacoco-branch-coverage>1.0</jacoco-branch-coverage>
         <jacoco-line-coverage>0.9</jacoco-line-coverage>
     </properties>

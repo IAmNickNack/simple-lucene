@@ -2,21 +2,14 @@ package slc.domain;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
 import io.github.iamnicknack.slc.annotation.AnnotatedRecordOperations;
-import io.github.iamnicknack.slc.api.backend.LuceneBackend;
 import io.github.iamnicknack.slc.api.index.DomainOperations;
-import name.falgout.jeffrey.testing.junit.guice.GuiceExtension;
-import name.falgout.jeffrey.testing.junit.guice.IncludeModule;
 import org.apache.lucene.document.Document;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import slc.domain.modules.BackendModule;
-import slc.domain.modules.DataModule;
 import slc.domain.operations.ShortCountryLuceneOperations;
 import slc.domain.operations.ShortCountryMapOperations;
 
@@ -27,10 +20,10 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(GuiceExtension.class)
-@IncludeModule({ BackendModule.class, DataModule.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ShortCountryComparisonTest {
+
+    private final TestComponent components;
 
     private final TypeReference<Map<String, Object>> mapTypeReference = new TypeReference<>() {};
     private final ObjectMapper mapper = new ObjectMapper();
@@ -40,14 +33,14 @@ class ShortCountryComparisonTest {
     private final DomainOperations<Map<String, Object>> mapOperations;
     private final DomainOperations<ShortCountry> shortCountryOperations;
 
-    @Inject
-    public ShortCountryComparisonTest(List<ShortCountry> countries,
-                                      LuceneBackend backend) {
-        this.shortCountries = countries;
+    public ShortCountryComparisonTest() {
+        components = DaggerTestComponent.create();
+        components.load();
 
-        this.luceneOperations = new ShortCountryLuceneOperations(backend.facetsConfig());
-        this.mapOperations = ShortCountryMapOperations.create(backend);
-        this.shortCountryOperations = AnnotatedRecordOperations.create(ShortCountry.class, backend);
+        this.shortCountries = components.countries();
+        this.luceneOperations = new ShortCountryLuceneOperations(components.luceneBackend().facetsConfig());
+        this.mapOperations = ShortCountryMapOperations.create(components.luceneBackend());
+        this.shortCountryOperations = AnnotatedRecordOperations.create(ShortCountry.class, components.luceneBackend());
     }
 
     /**
@@ -59,13 +52,13 @@ class ShortCountryComparisonTest {
     }
 
     @BeforeEach
-    void beforeEach(LuceneBackend backend) {
-        backend.update(components -> components.indexWriter().deleteAll());
+    void beforeEach() {
+        components.luceneBackend().update(components -> components.indexWriter().deleteAll());
     }
 
     @AfterAll
-    void afterAll(BackendModule.ShutdownHook shutdownHook) throws IOException {
-        shutdownHook.shutDown();
+    void afterAll() throws IOException {
+        components.shutdownHook().shutDown();
     }
 
     @ParameterizedTest

@@ -12,8 +12,8 @@
     <artifactId>simple-lucene-aspects</artifactId>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <jacoco-branch-coverage>0</jacoco-branch-coverage>
         <jacoco-line-coverage>0</jacoco-line-coverage>
         <aspectj.version>1.9.19</aspectj.version>
