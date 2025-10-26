@@ -62,7 +62,7 @@
         <mockito.version>5.14.2</mockito.version>
         <assertj.version>3.27.3</assertj.version>
         <slf4j.version>2.0.16</slf4j.version>
-        <logback.version>1.5.15</logback.version>
+        <logback.version>1.5.20</logback.version>
         <aspectj.version>1.9.22.1</aspectj.version>
         <maven-javadoc.version>3.11.2</maven-javadoc.version>
         <maven-sources.version>3.3.1</maven-sources.version>
